@@ -1,42 +1,27 @@
 ---
-title: Introducing Yozma - A Minimalist Blog Platform
-date: 2025-03-06
+title: Introducing Yozma
+date: 2025-07-07
 author: Saidafzal Kholkhujaev
-keywords:
-  [
-    Yozma,
-    Next.js,
-    Static Export,
-    GitHub Pages,
-    GitHub Actions,
-    Markdown,
-    Blogging,
-  ]
-description: Yozma is a lightweight, static blog powered by Next.js, Markdown, and GitHub Pages, designed for simplicity and automation.
+keywords: [yozma, tanishtirish, blog, open source, dasturlash]
+description: Yozmaning ilk posti. Nima uchun ushbu loyihani boshladim va undan qanday foydalanish mumkin.
 ---
 
-# Welcome to Yozma - A Simple and Automated Blog Platform
+# Introducing Yozma
 
-Yozma is a minimalist blogging platform designed to be fast, automated, and easy to use. It leverages **Next.js (Static Export Mode)**, **Markdown**, and **GitHub Pages** to provide a seamless blogging experience without the need for complex backend management.
+Assalomu alaykum, Yozmaga hush kelibsiz 🙂 Bu kichik bir loyiha bo‘lib, unda men kichik maqolalar yozishga harakat qilaman. Ishdan tashqari paytimda maqolalar yozishni va ularni o‘zim yaratgan kichik saytda saqlash g‘oyasiga keldim.
 
-## How Yozma Works
+Aytgancha, **Yozma open source** loyiha hisoblanadi. Agar sizda GitHub va Markdown bo‘yicha bilimingiz bo‘lsa, undan bemalol foydalanishingiz mumkin. Men Yozmani **GitHub Pages** orqali host qilganman.
 
-1. **Write in Markdown**: Each blog post is a simple `.md` file stored in the `posts` folder.
-2. **Automatic Deployment**: When a new Markdown file is pushed to the repository, **GitHub Actions** triggers an automated deployment.
-3. **Static Site Generation**: Using **Next.js 15 (App Router)** in **Static Export Mode**, the blog is pre-rendered for optimal performance.
-4. **Hosting with GitHub Pages**: The statically generated site is served for free using **GitHub Pages**.
-5. **Beautiful Typography**: Styled with **Tailwind CSS Typography**, ensuring a clean and readable design.
-6. **Telegram Instant View**: Supports **Telegram Instant View**, making posts instantly readable within Telegram.
+## Nima uchun Yozmani boshladim?
 
-## Why Yozma?
+Birinchidan, bu shunchaki o‘z fikrlarimni matn ko‘rinishiga o‘tkazish uchun ajoyib imkoniyat deb hisoblayman. Chunki fikrlarni yozib ko‘rsak, uning kamchiliklari ko‘rina boshlaydi. Agar uni birovga ko‘rsatsak, yanada mukammalroq qilishga harakat qilamiz.
 
-- **No database** – Purely static content means no backend maintenance.
-- **Version-controlled** – Blog content is managed directly via **GitHub**, ensuring easy collaboration and history tracking.
-- **Fast and SEO-friendly** – Static export provides excellent speed and performance.
-- **Automated workflow** – No manual deployment; push your post, and it's live!
+Bundan tashqari, men chiroyli yozishni ham o‘rganmoqchiman. Lekin "Nega aynan buning uchun Yozmani yasash kerak edi?" deb so‘rasangiz, javobim oddiy — nega bo‘lmasin? Bu mening qo‘limdan keladi va o‘zim uchun qulay platformani yaratib olish ajoyib fikr deb o‘ylayman. Qolaversa, bu **opensource**, ehtimol, kimdirdan foydasi tegishi mumkin 🙂 Zo‘r tomoni — istasangiz, **self-host** qilsa ham bo‘ladi.
 
-Yozma is perfect for developers and writers who want a simple, efficient, and automated blogging experience. Stay tuned for updates and improvements!
+## Bu yerda nima haqida maqolalar bo‘ladi?
+
+Ochig‘i, hozircha aniq reja yo‘q. Miyamga kelgan mavzular haqida yozaman. Ehtimol, dasturlash haqida ham postlar bo‘lib qolishi mumkin.
 
 ---
 
-**Get Started:** Simply add a Markdown file to the `posts` folder and push it to GitHub—your blog will be updated automatically!
+Yangi maqolalarda ko‘rishguncha!
