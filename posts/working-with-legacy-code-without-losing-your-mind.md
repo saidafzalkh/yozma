@@ -1,8 +1,9 @@
 ---
 title: Working with Legacy Code Without Losing Your Mind
 date: 2025-07-08
+status: draft
 author: Saidafzal Kholkhujaev
-keywords: [yozma, legacy code, frontend, javascript, backbone, react, software engineering]
+tags: [yozma, legacy code, frontend, javascript, backbone, react, software engineering]
 description: Reflections on maintaining legacy frontend code using Backbone, jQuery, and React—and what I’ve learned about architecture, mindset, and pragmatism.
 ---
 

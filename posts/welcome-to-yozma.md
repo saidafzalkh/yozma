@@ -1,27 +1,34 @@
 ---
 title: Introducing Yozma
-date: 2025-07-07
+date: '2025-07-07'
 author: Saidafzal Kholkhujaev
-keywords: [yozma, tanishtirish, blog, open source, dasturlash]
-description: Yozmaning ilk posti. Nima uchun ushbu loyihani boshladim va undan qanday foydalanish mumkin.
+tags:
+  - yozma
+  - taniştiriş
+  - blog
+  - open source
+  - dasturlaş
+description: >-
+  Yozmaning ilk posti. Nima uçun uşbu loyihani boşladim va undan qanday
+  foydalaniş mumkin.
 ---
 
 # Introducing Yozma
 
-Assalomu alaykum, Yozmaga hush kelibsiz 🙂 Bu kichik bir loyiha bo‘lib, unda men kichik maqolalar yozishga va ularni o‘zim yaratgan kichik saytda saqlashga harakat qilaman.
+Assalomu alaykum, Yozmaga huş kelibsiz 🙂 Bu kiçik bir loyiha bölib, unda men kiçik maqolalar yozişga va ularni özim yaratgan kiçik saytda saqlaşga harakat qilaman.
 
-Aytgancha, **Yozma open source** loyiha hisoblanadi. Agar sizda GitHub va Markdown bo‘yicha bilimingiz bo‘lsa, undan bemalol foydalanishingiz mumkin. Men Yozmani **GitHub Pages** orqali host qilganman.
+Aytgança, **Yozma open source** loyiha hisoblanadi. Agar sizda GitHub va Markdown böyiça bilimingiz bölsa, undan bemalol foydalanişingiz mumkin. Men Yozmani **GitHub Pages** orqali host qilganman.
 
-## Nima uchun Yozmani boshladim?
+## Nima uçun Yozmani boşladim?
 
-Birinchidan, bu shunchaki o‘z fikrlarimni matn ko‘rinishiga o‘tkazish uchun ajoyib imkoniyat deb hisoblayman. Chunki fikrlarni yozib ko‘rsak, uning kamchiliklari ko‘rina boshlaydi. Agar uni birovga ko‘rsatsak, yanada mukammalroq qilishga harakat qilamiz.
+Birinçidan, bu şunçaki öz fikrlarimni matn körinişiga ötkaziş uçun ajoyib imkoniyat deb hisoblayman. Çunki fikrlarni yozib körsak, uning kamçiliklari körina boşlaydi. Agar uni birovga körsatsak, yanada mukammalroq qilişga harakat qilamiz.
 
-Bundan tashqari, men chiroyli yozishni ham o‘rganmoqchiman. Lekin "Nega aynan buning uchun Yozmani yasash kerak edi?" deb so‘rasangiz, javobim oddiy — nega bo‘lmasin? Bu mening qo‘limdan keladi va o‘zim uchun qulay platformani yaratib olish ajoyib fikr deb o‘ylayman. Qolaversa, bu **opensource**, ehtimol, kimdirga foydasi tegishi mumkin 🙂 Zo‘r tomoni — istasangiz, **self-host** qilsa ham bo‘ladi.
+Bundan taşqari, men çiroyli yozişni ham örganmoqçiman. Lekin "Nega aynan buning uçun Yozmani yasaş kerak edi?" deb sörasangiz, javobim oddiy — nega bölmasin? Bu mening qölimdan keladi va özim uçun qulay platformani yaratib oliş ajoyib fikr deb öylayman. Qolaversa, bu **opensource**, ehtimol, kimdirga foydasi tegişi mumkin 🙂 Zör tomoni — istasangiz, **self-host** qilsa ham böladi.
 
-## Bu yerda nima haqida maqolalar bo‘ladi?
+## Bu yerda nima haqida maqolalar böladi?
 
-Ochig‘i, hozircha aniq reja yo‘q. Miyamga kelgan mavzular haqida yozaman. Ehtimol, dasturlash haqida ham postlar bo‘lib qolishi mumkin.
+Oçiği, hozirça aniq reja yöq. Miyamga kelgan mavzular haqida yozaman. Ehtimol, dasturlaş haqida ham postlar bölib qolişi mumkin.
 
 ---
 
-Yangi maqolalarda ko‘rishguncha!
+Yangi maqolalarda körişgunça!
