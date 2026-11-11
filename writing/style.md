@@ -17,11 +17,11 @@ Good, from the reference post: `Halol aytganda, hamma qism hali tayyor emas.` an
 ## Frontmatter
 
 - `title`, `date` (today in `Asia/Tashkent`, `YYYY-MM-DD`), `author`, `description` (one or two sentences), `tags`, `source` (`claude` or `chatgpt`, taken from the chat you are in).
-- `seed`: the very first sentence of the conversation, translated into Uzbek. It is the seed the post grew from. Keep the author's wording, do not polish it.
+- `seed`: the very first sentence of the conversation, translated into Uzbek in the new alphabet. If the first message is long, use its opening sentence, or the single sentence that states the idea. It is the seed the post grew from. Keep the author's wording, do not polish it.
 
 ## AI footnotes
 
-Notes marked `[^ai-N]` show where the model took part. Rules:
+Notes marked `[^ai-N]` show where the model took part. The site renders them as a purple ✦. Rules:
 
 - Phrase them as joint work: `Bu yondaşuv Claude bilan muhokamada çiqdi.` or `... variantini Claude bilan birga körib çiqdik.`
 - Never as the model giving the answer: not `Claude yeçim berdi`, not `Claude taklif qildi va men qabul qildim`.
