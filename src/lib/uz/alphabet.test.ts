@@ -41,6 +41,12 @@ describe("alphabet", () => {
   it("protected words", () => {
     expect(toNewAlphabet("ChatGPT bilan GitHub'da", P)).toBe("ChatGPT bilan GitHubʼda");
   });
+  it("protected words stay protected before tutuq, idempotently", () => {
+    const Q = ["ChatGPT", "Chrome"];
+    const once = toNewAlphabet("ChatGPT'da Chrome'da", Q);
+    expect(once).toBe("ChatGPTʼda Chromeʼda");
+    expect(toNewAlphabet(once, Q)).toBe(once);
+  });
   it("protected zones", () => {
     const md = "---\ntitle: x\n---\nshahar `fetch()` [shu](https://ex.com/shop)\n```mermaid\nA-->B[shahar]\n```\n";
     expect(toNewAlphabet(md, P)).toBe("---\ntitle: x\n---\nşahar `fetch()` [şu](https://ex.com/shop)\n```mermaid\nA-->B[shahar]\n```\n");

@@ -3,6 +3,9 @@ import { splitSegments } from "./segments";
 const TUTUQ = "ʼ"; // ʼ
 const APOS = "\u02BB'\u2018\u2019"; // ʻ ' ‘ ’ (backtick is markdown code, not an apostrophe)
 
+// A letter for word-boundary purposes: apostrophe-like modifier letters (ʻ ʼ, category Lm) are not part of a word.
+const WORD_LETTER = "(?:(?![\\u02BB\\u02BC])\\p{L})";
+
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -13,7 +16,7 @@ const LOWER_NEW: Record<string, string> = { o: "ö", g: "ğ", s: "ş", c: "ç" }
 function convertProse(prose: string, protectedWords: readonly string[]): string {
   const words = [...protectedWords].filter(Boolean).sort((a, b) => b.length - a.length);
   const protectedAlt = words.length
-    ? `(?<!\\p{L})(?:${words.map(escapeRegExp).join("|")})(?!\\p{L})|`
+    ? `(?<!${WORD_LETTER})(?:${words.map(escapeRegExp).join("|")})(?!${WORD_LETTER})|`
     : "";
   const re = new RegExp(
     `${protectedAlt}` +
