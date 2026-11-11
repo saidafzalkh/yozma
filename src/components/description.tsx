@@ -3,28 +3,31 @@ import Link from "next/link";
 export default function Description() {
   return (
     <>
-      <h1>Yozma - Personal Web Blog</h1>
+      <h1>Yozma</h1>
       <p>
-        <strong>Yozma</strong> is my personal web blog, a space where I share my
-        thoughts, ideas, and discoveries. The name <strong>Yozma</strong>, an Uzbek word,
-        reflects my passion for writing and expression. According to the Uzbek Explanatory Dictionary {' '}
+        <strong>Yozma</strong> — mening şaxsiy veb-blogim, men öz fikrlarim,
+        ğoyalarim va kaşfiyotlarim bilan örtoqlaşadigan maydon. Özbekça{" "}
+        <strong>Yozma</strong> nomi yozişga va özimni ifodalaşga bölgan
+        iştiyoqimni aks ettiradi. Özbek tilining izohli luğati{" "}
         <a
           href="https://izoh.uz/word/yozma"
           target="_blank"
           rel="noopener noreferrer"
         >
-        izoh.uz
-        </a>, <strong>yozma</strong> means:
+          izoh.uz
+        </a>{" "}
+        saytiga köra, <strong>yozma</strong> quyidagini anglatadi:
       </p>
       <blockquote className="italic border-l-4 pl-4 my-2 text-sm text-gray-600">
-        «Yozuv bilan ifodalangan, yozilgan. Og‘zaki va yozma nutq. Yozma manbalar.
-        Yozma til — adabiy til.»
+        «Yozuv bilan ifodalangan, yozilgan. Oğzaki va yozma nutq. Yozma
+        manbalar. Yozma til — adabiy til.»
       </blockquote>
       <p>
-        Here, you&apos;ll find posts about philosophy, books, technology, and personal
-        insights — everything that fuels my curiosity and learning journey.
+        Bu yerda falsafa, kitoblar, texnologiya va şaxsiy mulohazalar haqidagi
+        postlarni topasiz — qiziqişim va örganiş yölimni oziqlantiradigan
+        hamma narsa.
         <br />
-        <Link href={"/about"}>Read more.</Link>
+        <Link href={"/about"}>Batafsil öqiş.</Link>
       </p>
     </>
   );

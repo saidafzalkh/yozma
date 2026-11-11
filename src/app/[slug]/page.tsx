@@ -1,12 +1,17 @@
-import { getMarkdownSlugs, getPostContent } from "@/lib/getPosts";
+import PostMetaLine from "@/components/post-meta-line";
+import { getPost, getPublishedPosts } from "@/lib/posts/repository";
+import { renderMarkdown } from "@/lib/posts/render";
+import { tagSlug } from "@/lib/uz/format";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{ slug: string }>;
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return getMarkdownSlugs();
+  return getPublishedPosts().map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
@@ -15,28 +20,41 @@ export async function generateMetadata({
   params: Params;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostContent(slug);
+  const post = getPost(slug);
   if (!post) return {};
 
   return {
-    title: post.metadata.title,
-    description: post.metadata.description,
-    keywords: post.metadata.keywords.join(", "),
-    authors: [{ name: post.metadata.author }],
+    title: post.title,
+    description: post.description,
+    keywords: post.tags.join(", "),
+    authors: [{ name: post.author }],
   };
 }
 
 export default async function PostPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const post = await getPostContent(slug);
+  const post = getPost(slug);
   if (!post) return notFound();
+
+  const html = await renderMarkdown(post.body, post.slug);
 
   return (
     <div>
       <div className="mb-4">
-        <Link href={"/"}>Home</Link>
+        <Link href={"/"}>Bosh sahifa</Link>
       </div>
-      <article dangerouslySetInnerHTML={{ __html: post.html }} />
+      <h1 className="mb-2">{post.title}</h1>
+      <PostMetaLine post={post} />
+      <article dangerouslySetInnerHTML={{ __html: html }} />
+      {post.tags.length > 0 && (
+        <ul className="flex flex-wrap gap-x-3 list-none pl-0 text-sm text-gray-600">
+          {post.tags.map((tag) => (
+            <li key={tag} className="pl-0 my-0">
+              <Link href={`/teg/${tagSlug(tag)}`}>#{tag}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

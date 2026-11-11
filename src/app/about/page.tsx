@@ -4,26 +4,26 @@ export default function About() {
   return (
     <section>
       <div className="mb-4">
-        <Link href="/">Home</Link>
+        <Link href="/">Bosh sahifa</Link>
       </div>
 
-      <h1>About</h1>
+      <h1>Loyiha haqida</h1>
 
       <p>
-        <strong>Yozma</strong> is an open-source web blog designed for
-        simplicity, performance, and ease of use. Built with{" "}
+        <strong>Yozma</strong> — oddiylik, tezkorlik va qulaylik uçun yaratilgan
+        oçiq kodli veb-blog. U{" "}
         <a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer">
           Next.js
         </a>{" "}
-        in Static Export mode, it leverages{" "}
+        asosida Static Export rejimida qurilgan, hosting uçun{" "}
         <a
           href="https://pages.github.com/"
           target="_blank"
           rel="noopener noreferrer"
         >
           GitHub Pages
-        </a>{" "}
-        for hosting and{" "}
+        </a>
+        , avtomatik CI/CD va joylaştiriş uçun esa{" "}
         <a
           href="https://github.com/features/actions"
           target="_blank"
@@ -31,10 +31,10 @@ export default function About() {
         >
           GitHub Actions
         </a>{" "}
-        for automated CI/CD and deployment.
+        işlatiladi.
       </p>
       <p>
-        For styling,{" "}
+        Dizayn uçun{" "}
         <a
           href="https://tailwindcss.com/"
           target="_blank"
@@ -42,7 +42,7 @@ export default function About() {
         >
           tailwindcss
         </a>{" "}
-        and{" "}
+        va{" "}
         <a
           href="https://tailwindcss.com/docs/typography-plugin"
           target="_blank"
@@ -50,8 +50,8 @@ export default function About() {
         >
           @tailwindcss/typography
         </a>{" "}
-        ensure a clean and readable layout. Content is written in Markdown,
-        using{" "}
+        toza va qulay öqiladigan körinişni taʼminlaydi. Kontent Markdown
+        formatida yoziladi, asosiy yoziş vositasi sifatida{" "}
         <a
           href="https://obsidian.md/"
           target="_blank"
@@ -59,13 +59,12 @@ export default function About() {
         >
           Obsidian
         </a>{" "}
-        as the primary writing tool, making it easy to structure and manage
-        posts.
+        işlatiladi — bu postlarni tuziş va boşqarişni yengillaştiradi.
       </p>
       <p>
-        The project is open to contributions, and the source code is available
-        on GitHub. If you&apos;re interested in how it works or want to
-        contribute, check out the repository and join the development!
+        Loyiha hissa qöşişga oçiq, manba kodi GitHubʼda mavjud. U qanday
+        işlaşi qiziqtirsa yoki hissa qöşmoqçi bölsangiz, repozitoriyga
+        ötib, işlanmaga qöşiling!
       </p>
 
       <a
@@ -73,7 +72,7 @@ export default function About() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Source
+        Manba kodi
       </a>
     </section>
   );
