@@ -77,4 +77,16 @@ describe("checkUzbek", () => {
       expect(v).not.toContain("title");
     }
   });
+
+  it("maps a token in a later chunk to the right word of the source", async () => {
+    const md = `${"a".repeat(4990)}\n\nBu şahr katta.\n`;
+    const f = okFetch((v) => {
+      const i = v.indexOf("shahr");
+      return i < 0 ? [] : [{ offset: i, length: 5, token: "shahr", type: "x", corrections: [] }];
+    });
+    const res = await checkUzbek(md, { apiKey: "K", fetch: f as unknown as typeof fetch });
+    expect(f.mock.calls.length).toBe(2);
+    expect(res).toHaveLength(1);
+    expect(md.slice(res[0].offset, res[0].offset + res[0].length)).toBe("şahr");
+  });
 });

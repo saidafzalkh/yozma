@@ -1,4 +1,4 @@
-# Taqiqlanğan iboralar
+# Taqiqlangan iboralar
 Har bir ibora yangi alifboda, alohida satrda `- ibora` şaklida yoziladi. Faqat nasrda, katta-kiçik harfga qaramay tekşiriladi.
 
 - xulosa qilib aytganda

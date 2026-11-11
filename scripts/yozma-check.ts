@@ -21,13 +21,28 @@ async function main() {
   let errorCount = 0;
   let warningCount = 0;
   for (const file of files) {
-    const source = fs.readFileSync(file, "utf8");
+    let source: string;
+    try {
+      source = fs.readFileSync(file, "utf8");
+    } catch (e) {
+      console.log(`${file}: ${e instanceof Error ? e.message : String(e)}`);
+      errorCount++;
+      continue;
+    }
     const slug = path.basename(file, ".md");
-    const { errors, warnings } = await lintPost(source, slug, {
-      protectedWords,
-      blacklist,
-      tahrirchi: apiKey ? { apiKey } : undefined,
-    });
+    let result: Awaited<ReturnType<typeof lintPost>>;
+    try {
+      result = await lintPost(source, slug, {
+        protectedWords,
+        blacklist,
+        tahrirchi: apiKey ? { apiKey } : undefined,
+      });
+    } catch (e) {
+      console.log(`${file}: ${e instanceof Error ? e.message : String(e)}`);
+      errorCount++;
+      continue;
+    }
+    const { errors, warnings } = result;
     const print = (issues: Issue[]) => {
       for (const i of issues) console.log(`${file}:${i.line ?? 1} [${i.code}] ${i.message}`);
     };

@@ -80,4 +80,21 @@ describe("lintPost", () => {
     expect(r.errors).toEqual([]);
     expect(r.warnings.some((w) => w.code === "spelling" || w.code === "suspicious")).toBe(false);
   });
+
+  it("keeps local errors and warns when fetch rejects", async () => {
+    const f = vi.fn(async () => {
+      throw new Error("network down");
+    });
+    const r = await lintPost(fm() + "oʻzbek\n", "p", { ...base, tahrirchi: { apiKey: "K", fetch: f as unknown as typeof fetch } });
+    expect(r.errors.some((e) => e.code === "old-og")).toBe(true);
+    const w = r.warnings.find((x) => x.code === "tahrirchi");
+    expect(w?.message).toBe("tahrirchi: tekşirib bölmadi — network down");
+  });
+
+  it("keeps local errors and warns on HTTP 500", async () => {
+    const f = vi.fn(async () => new Response(JSON.stringify({ message: "boom" }), { status: 500 }));
+    const r = await lintPost(fm() + "oʻzbek\n", "p", { ...base, tahrirchi: { apiKey: "K", fetch: f as unknown as typeof fetch } });
+    expect(r.errors.some((e) => e.code === "old-og")).toBe(true);
+    expect(r.warnings.some((x) => x.code === "tahrirchi" && x.message.includes("boom"))).toBe(true);
+  });
 });

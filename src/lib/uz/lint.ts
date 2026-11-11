@@ -1,9 +1,9 @@
 import matter from "gray-matter";
 import { splitSegments } from "./segments";
-import { checkUzbek, type TahrirchiOptions } from "./tahrirchi";
+import { checkUzbek, type SpellSuggestion, type TahrirchiOptions } from "./tahrirchi";
 import { parsePostMeta } from "../posts/meta";
 
-export type IssueCode = "frontmatter" | "old-og" | "old-sh-ch" | "blacklist" | "spelling" | "suspicious";
+export type IssueCode = "frontmatter" | "old-og" | "old-sh-ch" | "blacklist" | "spelling" | "suspicious" | "tahrirchi";
 export interface Issue {
   code: IssueCode;
   message: string;
@@ -83,7 +83,7 @@ async function lint(source: string, slug: string, opts: LintOptions) {
       for (const m of seg.text.matchAll(re)) {
         warnings.push({
           code: "blacklist",
-          message: `taqiqlanğan ibora: "${p}"`,
+          message: `taqiqlangan ibora: "${p}"`,
           line: lineAt(source, seg.start + (m.index ?? 0)),
         });
       }
@@ -91,7 +91,14 @@ async function lint(source: string, slug: string, opts: LintOptions) {
   }
 
   if (opts.tahrirchi) {
-    for (const s of await checkUzbek(source, opts.tahrirchi)) {
+    let suggestions: SpellSuggestion[] = [];
+    try {
+      suggestions = await checkUzbek(source, opts.tahrirchi);
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      warnings.push({ code: "tahrirchi", message: `tahrirchi: tekşirib bölmadi — ${reason}` });
+    }
+    for (const s of suggestions) {
       const line = lineAt(source, s.offset);
       if (/sh|ch/i.test(s.oldToken ?? "")) {
         warnings.push({ code: "suspicious", message: `şübhali söz "${s.token}": ${HINT}`, line });
