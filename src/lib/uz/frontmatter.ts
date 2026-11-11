@@ -17,7 +17,7 @@ export function splitFrontmatter(source: string): { data: Record<string, unknown
   const close = re.exec(source);
   if (!close) return none;
   const bodyStart = close.index + close[0].length;
-  const loaded = yaml.safeLoad(source.slice(open[0].length, close.index)) as unknown;
+  const loaded = yaml.safeLoad(source.slice(open[0].length, close.index), { schema: yaml.CORE_SCHEMA }) as unknown;
   if (loaded === undefined || loaded === null) return { data: {}, body: source.slice(bodyStart), bodyStart };
   if (typeof loaded !== "object" || Array.isArray(loaded) || loaded instanceof Date) {
     throw new Error("frontmatter must be a YAML mapping");

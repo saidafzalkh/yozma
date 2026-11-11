@@ -37,6 +37,18 @@ describe("repository", () => {
       fs.rmSync(path.join(dir, "broken.md"));
     }
   });
+  it("rejects an impossible unquoted date with a single file prefix", () => {
+    fs.writeFileSync(path.join(dir, "bad-date.md"), fm({ title: "X", date: "2025-02-30" }));
+    try {
+      expect(() => getPublishedPosts(dir)).toThrow(/^posts\/bad-date\.md: invalid date: 2025-02-30$/);
+      expect(() => getPublishedPosts(dir)).toThrow(/^(?!.*posts\/bad-date\.md: posts\/)/);
+    } finally {
+      fs.rmSync(path.join(dir, "bad-date.md"));
+    }
+  });
+  it("keeps an unquoted valid date as YYYY-MM-DD", () => {
+    expect(getPost("old-post", dir)?.date).toBe("2025-07-08");
+  });
   it("groups tags by slug, excluding drafts", () => {
     const tags = getAllTags(dir);
     expect(tags.map((t) => t.slug).sort()).toEqual(["ai", "dasturlash"]);

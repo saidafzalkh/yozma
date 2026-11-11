@@ -29,6 +29,12 @@ describe("lintPost", () => {
     expect(r.errors.some((e) => e.code === "frontmatter" && /ўзбек/.test(e.message))).toBe(true);
   });
 
+  it("reports an impossible unquoted date as a frontmatter error", async () => {
+    const src = "---\ntitle: Salom\ndate: 2025-02-30\ndescription: Tavsif\ntags: [a]\n---\nx\n";
+    const r = await lintPost(src, "p", base);
+    expect(r.errors.some((e) => e.code === "frontmatter" && /2025-02-30/.test(e.message))).toBe(true);
+  });
+
   it("reports invalid YAML as a frontmatter error", async () => {
     const r = await lintPost("---\ntitle: [a\n---\nx\n", "p", base);
     expect(r.errors.map((e) => e.code)).toContain("frontmatter");

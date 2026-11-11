@@ -6,8 +6,7 @@ describe("splitFrontmatter", () => {
     const src = "---\ntitle: Salom\ndate: 2025-07-08\n---\n\nBody\n";
     const r = splitFrontmatter(src);
     expect(r.data.title).toBe("Salom");
-    expect(r.data.date).toBeInstanceOf(Date);
-    expect((r.data.date as Date).toISOString().slice(0, 10)).toBe("2025-07-08");
+    expect(r.data.date).toBe("2025-07-08");
     expect(r.body).toBe("\nBody\n");
     expect(src.slice(r.bodyStart)).toBe(r.body);
   });
