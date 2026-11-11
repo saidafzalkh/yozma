@@ -1,4 +1,5 @@
 import rehypeMermaid from "rehype-mermaid";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
@@ -15,6 +16,16 @@ export const MERMAID_CONFIG = {
     fontFamily: "Inter, sans-serif",
   },
 } as const;
+
+/** Same as the default schema, but only http, https and mailto links (and http(s) images). */
+const SANITIZE_SCHEMA = {
+  ...defaultSchema,
+  protocols: {
+    ...defaultSchema.protocols,
+    href: ["http", "https", "mailto"],
+    src: ["http", "https"],
+  },
+};
 
 /** The page renders the h1, so a leading `# ` line is dropped from the body. */
 function stripLeadingH1(markdown: string): string {
@@ -33,6 +44,8 @@ export async function renderMarkdown(
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    // Before rehype-mermaid: the inline SVG it adds must not be sanitized away.
+    .use(rehypeSanitize, SANITIZE_SCHEMA)
     .use(rehypeMermaid, {
       strategy: "inline-svg",
       mermaidConfig: MERMAID_CONFIG,

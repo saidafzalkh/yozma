@@ -32,6 +32,38 @@ describe("renderMarkdown", () => {
     expect(html).not.toContain('class="language-mermaid"');
   });
 
+  it("drops unsafe link and image protocols", async () => {
+    const md = [
+      "[a](javascript:alert(1))",
+      "[b](JaVaScRiPt:alert(1))",
+      "[c](data:text/html;base64,PHNjcmlwdD4=)",
+      "[d](vbscript:msgbox(1))",
+      "[e](irc://x)",
+      "![f](javascript:alert(1))",
+      "![g](data:image/svg+xml;base64,AAAA)",
+    ].join("\n\n");
+    const html = await renderMarkdown(md, "x");
+    expect(html).not.toMatch(/javascript:|data:|vbscript:|irc:/i);
+    expect(html).toContain(">a</a>");
+  });
+
+  it("keeps safe links", async () => {
+    const md =
+      "[a](https://x.uz/p) [b](mailto:a@b.uz) [c](/posts/x) [d](../y) [e](#bob) ![f](https://x.uz/i.png)";
+    const html = await renderMarkdown(md, "x");
+    for (const h of ['href="https://x.uz/p"', 'href="mailto:a@b.uz"', 'href="/posts/x"', 'href="../y"', 'src="https://x.uz/i.png"']) {
+      expect(html).toContain(h);
+    }
+    expect(html).toMatch(/href="#(user-content-)?bob"/);
+  });
+
+  it("keeps code language classes and GFM footnotes", async () => {
+    const html = await renderMarkdown("```ts\nconst a = 1;\n```\n\nMatn[^1]\n\n[^1]: izoh", "x");
+    expect(html).toContain('class="language-ts"');
+    expect(html).toContain("izoh");
+    expect(html).toContain("<sup>");
+  });
+
   it("rejects mermaid syntax errors", { timeout: SLOW }, async () => {
     await expect(
       renderMarkdown("```mermaid\ngraph TD; A-->\n```", "x"),
