@@ -1,0 +1,15 @@
+# Words that must never be converted to the 2026 alphabet (one per line).
+ChatGPT
+Claude
+GitHub
+Chrome
+Shopify
+Next.js
+TypeScript
+JavaScript
+Codex
+OpenAI
+Anthropic
+Cloudflare
+Markdown
+Tahrirchi
