@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "yozma:convert": "tsx scripts/convert-post.ts",
-    "yozma:check": "tsx scripts/yozma-check.ts"
+    "yozma:check": "tsx scripts/yozma-check.ts",
+    "mcp:typecheck": "pnpm --filter yozma-mcp typecheck"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
