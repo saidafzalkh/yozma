@@ -32,6 +32,15 @@ function fromBase64(b64: string): string {
   return new TextDecoder().decode(bytes);
 }
 
+function assertSafePath(value: string): void {
+  const bad =
+    value === "" ||
+    // eslint-disable-next-line no-control-regex
+    /[\\\u0000-\u001f\u007f]/.test(value) ||
+    value.split("/").some((seg) => seg === "" || seg === "." || seg === "..");
+  if (bad) throw new GitHubError(400, `notöğri yöl: ${value}`);
+}
+
 const encodePath = (path: string) => path.split("/").map(encodeURIComponent).join("/");
 
 export function createGitHub(opts: GitHubOptions) {
@@ -69,7 +78,9 @@ export function createGitHub(opts: GitHubOptions) {
     const msg =
       data && typeof data === "object" && "message" in data && typeof data.message === "string"
         ? data.message
-        : `GitHub ${status}`;
+        : typeof data === "string" && data
+          ? `GitHub ${status}: ${data.slice(0, 200)}`
+          : `GitHub ${status}`;
     throw new GitHubError(status, msg);
   }
 
@@ -85,10 +96,14 @@ export function createGitHub(opts: GitHubOptions) {
 
   return {
     async getFile(path: string, ref?: string): Promise<{ content: string; sha: string } | null> {
+      assertSafePath(path);
       const q = ref ? `?ref=${encodeURIComponent(ref)}` : "";
       const r = await requestOrNull(`${repoUrl}/contents/${encodePath(path)}${q}`);
       if (!r) return null;
-      const d = r.data as { content: string; sha: string };
+      const d = r.data as { encoding?: unknown; content?: unknown; sha: string };
+      if (Array.isArray(r.data) || d.encoding !== "base64" || typeof d.content !== "string") {
+        throw new GitHubError(r.status, `fayl öqib bölmadi: ${path}`);
+      }
       return { content: fromBase64(d.content), sha: d.sha };
     },
 
@@ -99,6 +114,8 @@ export function createGitHub(opts: GitHubOptions) {
       branch: string;
       sha?: string;
     }): Promise<{ commitUrl: string }> {
+      assertSafePath(p.path);
+      assertSafePath(p.branch);
       const body: Record<string, unknown> = {
         message: p.message,
         content: toBase64(p.content),
@@ -112,18 +129,20 @@ export function createGitHub(opts: GitHubOptions) {
         return { commitUrl: (r.data as { commit: { html_url: string } }).commit.html_url };
       } catch (e) {
         if (e instanceof GitHubError && (e.status === 409 || e.status === 422)) {
-          throw new GitHubError(e.status, CONFLICT_MESSAGE);
+          throw new GitHubError(e.status, `${CONFLICT_MESSAGE} (${e.message})`);
         }
         throw e;
       }
     },
 
     async getBranchSha(branch: string): Promise<string | null> {
+      assertSafePath(branch);
       const r = await requestOrNull(`${repoUrl}/git/ref/heads/${encodePath(branch)}`);
       return r ? (r.data as { object: { sha: string } }).object.sha : null;
     },
 
     async createBranch(name: string, fromSha: string): Promise<void> {
+      assertSafePath(name);
       await request(`${repoUrl}/git/refs`, {
         method: "POST",
         body: { ref: `refs/heads/${name}`, sha: fromSha },
@@ -131,6 +150,7 @@ export function createGitHub(opts: GitHubOptions) {
     },
 
     async findOpenPr(head: string): Promise<{ number: number; url: string } | null> {
+      assertSafePath(head);
       const r = await request(`${repoUrl}/pulls?head=${owner}:${encodePath(head)}&state=open`);
       const list = r.data as Array<{ number: number; html_url: string }>;
       return list.length ? { number: list[0].number, url: list[0].html_url } : null;

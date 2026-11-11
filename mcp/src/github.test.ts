@@ -3,13 +3,13 @@ import { createGitHub, GitHubError } from "./github";
 
 type Call = { url: string; init: RequestInit };
 
-function mockFetch(responses: Array<{ status?: number; body?: unknown }>) {
+function mockFetch(responses: Array<{ status?: number; body?: unknown; raw?: string }>) {
   const calls: Call[] = [];
   let i = 0;
   const fn = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
     calls.push({ url: String(url), init: init ?? {} });
     const r = responses[Math.min(i++, responses.length - 1)];
-    return new Response(JSON.stringify(r.body ?? {}), {
+    return new Response(r.raw ?? JSON.stringify(r.body ?? {}), {
       status: r.status ?? 200,
       headers: { "content-type": "application/json" },
     });
@@ -47,7 +47,7 @@ describe("github client", () => {
 
   it("getFile decodes UTF-8 base64 and passes ref", async () => {
     const text = "özbek ʼ ✦";
-    const { gh, calls } = mk([{ body: { content: b64(text).replace(/(.{4})/g, "$1\n"), sha: "s1" } }]);
+    const { gh, calls } = mk([{ body: { encoding: "base64", content: b64(text).replace(/(.{4})/g, "$1\n"), sha: "s1" } }]);
     expect(await gh.getFile("posts/a b.md", "post/x")).toEqual({ content: text, sha: "s1" });
     expect(calls[0].url).toBe(
       "https://api.github.com/repos/saidafzalkh/yozma/contents/posts/a%20b.md?ref=post%2Fx",
@@ -84,7 +84,9 @@ describe("github client", () => {
       .catch((e: unknown) => e);
     expect(err).toBeInstanceOf(GitHubError);
     expect((err as GitHubError).status).toBe(status);
-    expect((err as GitHubError).message).toBe("fayl boşqa joyda özgargan, qayta urinib köring");
+    expect((err as GitHubError).message).toBe(
+      "fayl boşqa joyda özgargan, qayta urinib köring (conflict)",
+    );
   });
 
   it("other non-2xx throws GitHubError", async () => {
@@ -131,5 +133,56 @@ describe("github client", () => {
     const { gh, calls } = mk([{ status: 201, body: { number: 3, html_url: "u" } }]);
     await gh.createPr({ head: "h", base: "main", title: "t", body: "b", labels: [] });
     expect(calls).toHaveLength(1);
+  });
+
+  it("getFile rejects directories, non-base64 encoding and non-string content", async () => {
+    for (const body of [[{ name: "a" }], { encoding: "none", content: "", sha: "s" }, { encoding: "base64", content: 5, sha: "s" }]) {
+      const { gh } = mk([{ body }]);
+      const err = await gh.getFile("posts/x.md").catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(GitHubError);
+      expect((err as GitHubError).message).toBe("fayl öqib bölmadi: posts/x.md");
+    }
+  });
+
+  it.each(["posts/../x.md", "posts//x.md", "./x", "a\\b", "post/..", "/x", "x/", "a\nb", ""])(
+    "rejects bad path/branch %j",
+    async (bad) => {
+      const { gh, calls } = mk([{ body: {} }]);
+      const errs = await Promise.all([
+        gh.getFile(bad).catch((e: unknown) => e),
+        gh.putFile({ path: bad, content: "x", message: "m", branch: "b" }).catch((e: unknown) => e),
+        gh.getBranchSha(bad).catch((e: unknown) => e),
+        gh.createBranch(bad, "s").catch((e: unknown) => e),
+        gh.findOpenPr(bad).catch((e: unknown) => e),
+      ]);
+      for (const err of errs) {
+        expect(err).toBeInstanceOf(GitHubError);
+        expect((err as GitHubError).status).toBe(400);
+        expect((err as GitHubError).message).toBe(`notöğri yöl: ${bad}`);
+      }
+      expect(calls).toHaveLength(0);
+    },
+  );
+
+  it("includes up to 200 chars of a non-JSON error body", async () => {
+    const { gh } = mk([{ status: 502, raw: "x".repeat(300) }]);
+    const err = (await gh.getBranchSha("main").catch((e: unknown) => e)) as GitHubError;
+    expect(err.status).toBe(502);
+    expect(err.message).toContain("x".repeat(200));
+    expect(err.message).not.toContain("x".repeat(201));
+  });
+
+  it("calls the default fetch without a bound this", async () => {
+    const orig = globalThis.fetch;
+    globalThis.fetch = function (this: unknown) {
+      if (this !== undefined && this !== globalThis) throw new TypeError("Illegal invocation");
+      return Promise.resolve(new Response(JSON.stringify({ object: { sha: "z" } })));
+    } as typeof fetch;
+    try {
+      const gh = createGitHub({ token: "t", repo: "o/r" });
+      expect(await gh.getBranchSha("main")).toBe("z");
+    } finally {
+      globalThis.fetch = orig;
+    }
   });
 });
