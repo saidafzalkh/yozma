@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Yozma</title>
+    <link>https://yozma.uz</link>
+    <description>ChatGPT va Claude bilan suhbatlarimdan çiqqan fikrlar, özbek tilida.</description>
+    <language>uz</language>
+    <atom:link href="https://yozma.uz/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Yozmani nega qayta qildim</title>
+      <link>https://yozma.uz/welcome-to-yozma</link>
+      <guid isPermaLink="true">https://yozma.uz/welcome-to-yozma</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>
+      <description>Suhbatlardagi fikrlar çatda qolib ketmasligi uçun Yozma endi ChatGPT va Claude bilan suhbatlardan post yasaydi. Qanday işlaşi va nega.</description>
+    </item>
+  </channel>
+</rss>
