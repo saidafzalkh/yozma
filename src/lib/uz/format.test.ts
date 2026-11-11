@@ -40,4 +40,12 @@ describe("tagSlug", () => {
   it("lowercases and collapses separators", () => {
     expect(tagSlug("  Yangi   Ilm!!  ")).toBe("yangi-ilm");
   });
+  it("handles dotted capital I", () => {
+    expect(tagSlug("\u0130stanbul")).toBe("istanbul");
+  });
+  it("throws when the slug would be empty, naming the tag", () => {
+    expect(() => tagSlug("---")).toThrow(/---/);
+    expect(() => tagSlug("\u02BB")).toThrow();
+    expect(() => tagSlug("\u040E\u0437\u0431\u0435\u043A")).toThrow(/\u040E/);
+  });
 });

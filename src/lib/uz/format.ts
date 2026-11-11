@@ -13,13 +13,6 @@ const MONTHS = [
   "dekabr",
 ];
 
-const SLUG_MAP: Record<string, string> = {
-  "ö": "o", // ö
-  "ğ": "g", // ğ
-  "ş": "s", // ş
-  "ç": "c", // ç
-};
-
 // Tutuq and apostrophe variants are dropped, not turned into separators.
 const SLUG_DROP = /[ʼʻ'‘’`]/g;
 
@@ -43,12 +36,18 @@ export function formatUzDate(date: string): string {
   return `${day}-${MONTHS[month - 1]}, ${year}`;
 }
 
-/** URL-safe ASCII slug for a tag, e.g. "dasturlaş" -> "dasturlas". */
+/**
+ * URL-safe ASCII slug for a tag, e.g. "dasturlaş" -> "dasturlas".
+ * Throws if nothing ASCII-alphanumeric remains, so a broken /teg/ URL cannot be built.
+ */
 export function tagSlug(tag: string): string {
-  return tag
+  const slug = tag
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
     .toLowerCase()
-    .replace(/[öğşç]/g, (ch) => SLUG_MAP[ch])
     .replace(SLUG_DROP, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+  if (slug === "") throw new Error(`tagSlug: empty slug for tag "${tag}"`);
+  return slug;
 }
