@@ -5,12 +5,12 @@ import type { Post } from "@/lib/posts/meta";
 
 export default function PostList({ posts }: { posts: Post[] }) {
   return (
-    <ul className="space-y-6 list-none pl-0">
+    <ul className="not-prose space-y-6 mb-10">
       {posts.map((post) => (
-        <li key={post.slug} className="pl-0">
+        <li key={post.slug}>
           <Link
             href={`/${post.slug}`}
-            className="space-x-2 no-underline cursor-pointer"
+            className="space-x-2 no-underline cursor-pointer font-medium"
             title={post.description}
           >
             <span className="text-sm text-gray-600">
@@ -18,9 +18,12 @@ export default function PostList({ posts }: { posts: Post[] }) {
             </span>
             <span>{post.title}</span>
             {post.source && (
-              <span className="text-ai" title={sourceLabel(post.source)}>
-                ✦
-              </span>
+              <>
+                <span className="text-ai" aria-hidden="true">
+                  ✦
+                </span>
+                <span className="sr-only"> ({sourceLabel(post.source)})</span>
+              </>
             )}
           </Link>
         </li>

@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div>
       <h2>Sahifa topilmadi</h2>
-      <Link href="/">Bosh sahifaga qaytiş</Link>
+      <Link href="/">Boş sahifaga qaytiş</Link>
     </div>
   );
 }

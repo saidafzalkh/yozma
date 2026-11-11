@@ -21,7 +21,9 @@ export default function PostMetaLine({
       {post.source && (
         <>
           {" · "}
-          <span className="text-ai">✦ {sourceLabel(post.source)}</span>
+          <span className="text-ai">
+            <span aria-hidden="true">✦</span> {sourceLabel(post.source)}
+          </span>
         </>
       )}
       {post.editedDate && (

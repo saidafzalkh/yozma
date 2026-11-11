@@ -4,7 +4,7 @@ export default function About() {
   return (
     <section>
       <div className="mb-4">
-        <Link href="/">Bosh sahifa</Link>
+        <Link href="/">Boş sahifa</Link>
       </div>
 
       <h1>Loyiha haqida</h1>

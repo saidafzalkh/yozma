@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/global.css";
 
@@ -5,6 +6,12 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
+
+export const metadata: Metadata = {
+  title: { default: "Yozma", template: "%s · Yozma" },
+  description:
+    "Yozma — şaxsiy veb-blog: fikrlar, ğoyalar va kaşfiyotlar haqida yozmalar.",
+};
 
 export default function RootLayout({
   children,

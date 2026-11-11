@@ -13,7 +13,7 @@ function loadPost(file: string, dir: string): Post {
   const filePath = path.join(dir, file);
   const { data, content } = matter(fs.readFileSync(filePath, "utf-8"));
   const meta = parsePostMeta(data, slug);
-  const editedDate = computeEditedDate(readCommits(filePath), meta.updated);
+  const editedDate = computeEditedDate(readCommits(filePath), meta.date, meta.updated);
   return { ...meta, ...(editedDate ? { editedDate } : {}), body: content };
 }
 

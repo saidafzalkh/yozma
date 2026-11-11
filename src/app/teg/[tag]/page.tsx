@@ -34,7 +34,7 @@ export default async function TagPage({ params }: { params: Params }) {
   return (
     <div>
       <div className="mb-4">
-        <Link href={"/"}>Bosh sahifa</Link>
+        <Link href={"/"}>Boş sahifa</Link>
       </div>
       <h1>#{found.tag}</h1>
       <PostList posts={found.posts} />

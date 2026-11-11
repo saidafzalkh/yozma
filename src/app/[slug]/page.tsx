@@ -41,7 +41,7 @@ export default async function PostPage({ params }: { params: Params }) {
   return (
     <div>
       <div className="mb-4">
-        <Link href={"/"}>Bosh sahifa</Link>
+        <Link href={"/"}>Boş sahifa</Link>
       </div>
       <h1 className="mb-2">{post.title}</h1>
       <PostMetaLine post={post} />
