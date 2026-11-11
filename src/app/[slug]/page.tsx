@@ -45,11 +45,21 @@ export default async function PostPage({ params }: { params: Params }) {
       </div>
       <h1 className="mb-2">{post.title}</h1>
       <PostMetaLine post={post} />
+      {post.seed && (
+        <figure className="not-prose my-6 border-l-2 border-gray-300 pl-4">
+          <figcaption className="text-xs text-gray-500">
+            Suhbat şundan boşlandi
+          </figcaption>
+          <blockquote className="mt-1 italic text-gray-700">
+            {post.seed}
+          </blockquote>
+        </figure>
+      )}
       <article dangerouslySetInnerHTML={{ __html: html }} />
       {post.tags.length > 0 && (
-        <ul className="flex flex-wrap gap-x-3 list-none pl-0 text-sm text-gray-600">
+        <ul className="not-prose flex flex-wrap gap-x-3 text-sm text-gray-600 mt-8 mb-10">
           {post.tags.map((tag) => (
-            <li key={tag} className="pl-0 my-0">
+            <li key={tag}>
               <Link href={`/teg/${tagSlug(tag)}`}>#{tag}</Link>
             </li>
           ))}

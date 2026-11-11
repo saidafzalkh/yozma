@@ -38,6 +38,10 @@ describe("splitFrontmatter", () => {
 });
 
 describe("convertFrontmatterFields", () => {
+  it("converts seed too", () => {
+    expect(convertFrontmatterFields({ seed: "Shu gʻoya" }, [])).toEqual({ seed: "Şu ğoya" });
+  });
+
   it("converts title, description and each tag; leaves others", () => {
     const input = { title: "Oʻzbek shahar", description: "Gʻoya", tags: ["dasturlash", "Choy", 5], date: "2026-01-01" };
     const out = convertFrontmatterFields(input, []);

@@ -13,6 +13,7 @@ export interface PostMeta {
   source?: PostSource;
   status: PostStatus;
   updated?: string; // YYYY-MM-DD
+  seed?: string; // the phrase the conversation started from
 }
 
 export interface Post extends PostMeta {
@@ -92,6 +93,9 @@ export function parsePostMeta(data: Record<string, unknown>, slug: string): Post
   if (data.author !== undefined && typeof data.author !== "string") {
     throw new PostMetaError(slug, "author must be a string");
   }
+  if (data.seed !== undefined && typeof data.seed !== "string") {
+    throw new PostMetaError(slug, "seed must be a string");
+  }
 
   const meta: PostMeta = {
     slug,
@@ -103,6 +107,7 @@ export function parsePostMeta(data: Record<string, unknown>, slug: string): Post
     status,
   };
   if (source !== undefined) meta.source = source;
+  if (typeof data.seed === "string" && data.seed.trim()) meta.seed = data.seed.trim();
   if (data.updated !== undefined) meta.updated = toIsoDate(data.updated, "updated", slug);
   return meta;
 }

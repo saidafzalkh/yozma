@@ -29,6 +29,12 @@ describe("lintPost", () => {
     expect(r.errors.some((e) => e.code === "frontmatter" && /ўзбек/.test(e.message))).toBe(true);
   });
 
+  it("lints the seed field", async () => {
+    const src = "---\ntitle: T\ndate: '2026-01-02'\nseed: Oʻzbekça savol\n---\n\nbody\n";
+    const r = await lintPost(src, "p", base);
+    expect(r.errors.some((e) => e.code === "old-og" && e.message.startsWith("seed: "))).toBe(true);
+  });
+
   it("reports an impossible unquoted date as a frontmatter error", async () => {
     const src = "---\ntitle: Salom\ndate: 2025-02-30\ndescription: Tavsif\ntags: [a]\n---\nx\n";
     const r = await lintPost(src, "p", base);

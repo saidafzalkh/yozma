@@ -104,7 +104,7 @@ async function lint(source: string, slug: string, opts: LintOptions) {
     if (i < 0) i = fmLines.findIndex((l) => l.startsWith(`${key}:`));
     return i < 0 ? undefined : i + 1;
   };
-  for (const key of ["title", "description"]) {
+  for (const key of ["title", "description", "seed"]) {
     const v = fmData[key];
     if (typeof v === "string") scanSpelling(v, `${key}: `, () => fmLine(v, key));
   }

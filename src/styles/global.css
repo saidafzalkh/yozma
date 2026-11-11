@@ -4,3 +4,29 @@
 @theme {
   --color-ai: #7c3aed;
 }
+
+/* Footnotes; `[^ai-…]` notes (ideas from the model) get a ✦ marker. */
+section[data-footnotes] {
+  font-size: 0.875em;
+  color: var(--color-gray-600);
+}
+section[data-footnotes] ol {
+  list-style: none;
+  counter-reset: fn;
+}
+section[data-footnotes] li {
+  counter-increment: fn;
+  position: relative;
+}
+section[data-footnotes] li::before {
+  content: counter(fn) ".";
+  position: absolute;
+  left: -1.5em;
+}
+section[data-footnotes] li.ai-note {
+  counter-increment: none;
+}
+section[data-footnotes] li.ai-note::before {
+  content: "✦";
+  color: var(--color-ai);
+}

@@ -47,4 +47,11 @@ describe("parsePostMeta", () => {
     expect(parsePostMeta({ ...base, updated: new Date("2026-01-02") }, "x").updated).toBe("2026-01-02");
     expect(() => parsePostMeta({ ...base, updated: "bad" }, "x")).toThrow(PostMetaError);
   });
+
+  it("reads an optional string seed and rejects non-strings", () => {
+    const base = { title: "T", date: "2026-11-12" };
+    expect(parsePostMeta({ ...base, seed: "  Bu loyihani asos qilsam-çi?  " }, "x").seed).toBe("Bu loyihani asos qilsam-çi?");
+    expect(parsePostMeta(base, "x").seed).toBeUndefined();
+    expect(() => parsePostMeta({ ...base, seed: 5 }, "x")).toThrow(/posts\/x\.md: seed must be a string/);
+  });
 });

@@ -25,13 +25,13 @@ export function splitFrontmatter(source: string): { data: Record<string, unknown
   return { data: loaded as Record<string, unknown>, body: source.slice(bodyStart), bodyStart };
 }
 
-/** Converts string `title`, `description` and each string entry of `tags` to the new alphabet. */
+/** Converts string `title`, `description`, `seed` and each string entry of `tags` to the new alphabet. */
 export function convertFrontmatterFields(
   data: Record<string, unknown>,
   protectedWords: readonly string[],
 ): Record<string, unknown> {
   const out: Record<string, unknown> = { ...data };
-  for (const key of ["title", "description"]) {
+  for (const key of ["title", "description", "seed"]) {
     const v = out[key];
     if (typeof v === "string") out[key] = toNewAlphabet(v, protectedWords);
   }

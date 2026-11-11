@@ -69,4 +69,25 @@ describe("renderMarkdown", () => {
       renderMarkdown("```mermaid\ngraph TD; A-->\n```", "x"),
     ).rejects.toThrow(/^posts\/x\.md: mermaid:/);
   });
+
+  it("renders ai footnotes as a purple ✦, keeps others numeric, labels in uzbek", async () => {
+    const html = await renderMarkdown(
+      "Fikr[^ai-1]. Atama[^1].\n\n[^ai-1]: Claude taklif qildi.\n[^1]: Izoh.",
+      "x",
+    );
+    expect(html).toMatch(/<a[^>]*class="text-ai"[^>]*>✦<\/a>/);
+    expect(html).toMatch(/data-footnote-ref[^>]*>\d+<\/a>/);
+    expect(html).toMatch(/<li[^>]*class="ai-note"/);
+    expect(html).toContain("Izohlar");
+    expect(html).not.toContain("Footnotes");
+  });
+
+  it("numbers regular footnotes consecutively, skipping ai notes", async () => {
+    const html = await renderMarkdown(
+      "A[^1] B[^ai-1] C[^2].\n\n[^1]: a\n[^ai-1]: b\n[^2]: c",
+      "x",
+    );
+    const refs = [...html.matchAll(/data-footnote-ref[^>]*>([^<]+)<\/a>/g)].map((m) => m[1]);
+    expect(refs).toEqual(["1", "✦", "2"]);
+  });
 });
