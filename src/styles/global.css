@@ -36,7 +36,7 @@ pre.shiki {
   border: 1px solid var(--color-gray-200);
 }
 
-/* Sidenotes: footnotes in the right margin on wide screens, the footnotes section otherwise. */
+/* Sidenotes: simple footnotes in the right margin on wide screens, the footnotes section otherwise. */
 .sidenote {
   display: none;
 }
@@ -59,7 +59,13 @@ pre.shiki {
   .sidenote.ai .sidenote-number {
     color: var(--color-ai);
   }
-  section[data-footnotes] {
-    display: none;
+  /* Visually hidden only: screen readers still reach the notes. */
+  section.all-sidenoted {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

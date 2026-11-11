@@ -1,21 +1,28 @@
 type MdNode = { type: string; value?: string; children?: MdNode[] };
 
-/** Opening quote: at the start of a text run or after whitespace / an opening bracket / a dash. */
-const OPENING_QUOTE = /(^|[\s([{«—–-])"/g;
+/** Blocks within which straight double quotes are paired, across inline markup like `**…**`. */
+const QUOTE_SCOPES = new Set(["paragraph", "heading", "tableCell"]);
 
-export function uzTypography(text: string): string {
-  return text
-    .replace(/\.\.\./g, "…")
-    .replace(/--/g, "—")
-    .replace(OPENING_QUOTE, "$1«")
-    .replace(/"/g, "»");
+/** Ellipses and spaced dashes; `--flag` without surrounding spaces stays as written. */
+export function uzPunctuation(text: string): string {
+  return text.replace(/\.\.\./g, "…").replace(/(^|\s)--(?=\s|$)/g, "$1—");
 }
 
 /** Remark plugin: Uzbek quotes «», em dashes and ellipses in prose. Code is untouched. */
 export function remarkUzTypography() {
-  const walk = (node: MdNode) => {
-    if (node.type === "text" && node.value !== undefined) node.value = uzTypography(node.value);
-    node.children?.forEach(walk);
+  const walk = (node: MdNode, quote: { open: boolean } | null) => {
+    if (node.type === "text" && node.value !== undefined) {
+      let value = uzPunctuation(node.value);
+      if (quote) {
+        value = value.replace(/"/g, () => {
+          quote.open = !quote.open;
+          return quote.open ? "«" : "»";
+        });
+      }
+      node.value = value;
+    }
+    const scope = QUOTE_SCOPES.has(node.type) ? { open: false } : quote;
+    node.children?.forEach((child) => walk(child, scope));
   };
-  return walk;
+  return (tree: MdNode) => walk(tree, null);
 }

@@ -66,24 +66,42 @@ function rehypeAiFootnotes() {
   };
 }
 
+const isBackref = (n: HastNode) => n.tagName === "a" && "dataFootnoteBackref" in (n.properties ?? {});
+const containsTag = (n: HastNode, tag: string): boolean =>
+  n.tagName === tag || (n.children ?? []).some((c) => containsTag(c, tag));
+
 /**
- * Copies each footnote next to its reference as `<span class="sidenote">`, shown in the margin on
- * wide screens (CSS); the footnotes section stays for narrow screens. Runs after rehypeAiFootnotes.
+ * Copies each simple footnote (one paragraph, no nested footnotes) next to its reference as
+ * `<span class="sidenote">`, shown in the margin on wide screens. If every note is simple, the
+ * footnotes section gets `all-sidenoted` and is only visually hidden there (screen readers keep it).
+ * Runs after rehypeAiFootnotes.
  */
 function rehypeSidenotes() {
   const notes = new Map<string, HastNode[]>();
+  let allSimple = true;
   const collect = (node: HastNode) => {
     const id = node.properties?.id;
     if (node.tagName === "li" && typeof id === "string" && id.includes("fn-")) {
-      const para = node.children?.find((c) => c.tagName === "p");
-      const content = (para?.children ?? []).filter(
-        (c) => !(c.tagName === "a" && "dataFootnoteBackref" in (c.properties ?? {})),
-      );
-      const last = content[content.length - 1];
-      if (last?.type === "text" && last.value) last.value = last.value.trimEnd();
-      notes.set(`#${id}`, content);
+      const blocks = (node.children ?? []).filter((c) => c.type === "element");
+      const para = blocks.length === 1 && blocks[0].tagName === "p" ? blocks[0] : undefined;
+      if (para && !containsTag(para, "sup")) {
+        const content = (para.children ?? []).filter((c) => !isBackref(c));
+        const last = content[content.length - 1];
+        if (last?.type === "text" && last.value) last.value = last.value.trimEnd();
+        notes.set(`#${id}`, content);
+      } else {
+        allSimple = false;
+      }
+      return;
     }
     node.children?.forEach(collect);
+  };
+  const markSection = (node: HastNode) => {
+    if (node.tagName === "section" && node.properties && "dataFootnotes" in node.properties) {
+      node.properties.className = ["footnotes", "all-sidenoted"];
+      return;
+    }
+    node.children?.forEach(markSection);
   };
   const insert = (node: HastNode) => {
     const children = node.children;
@@ -114,6 +132,7 @@ function rehypeSidenotes() {
   return (tree: HastNode) => {
     collect(tree);
     insert(tree);
+    if (allSimple && notes.size > 0) markSection(tree);
   };
 }
 

@@ -123,4 +123,25 @@ describe("renderMarkdown", () => {
     expect(targets.length).toBeGreaterThanOrEqual(4);
     for (const t of targets) expect(ids).toContain(t);
   });
+
+  it("typography: dashes only between spaces, quotes paired across inline markup", async () => {
+    const html = await renderMarkdown('Run --force now -- then "**x**" and "y".', "x");
+    expect(html).toContain("Run --force now — then «<strong>x</strong>» and «y».");
+  });
+
+  it("only simple footnotes become sidenotes; complex ones keep the visible section", async () => {
+    const simple = await renderMarkdown("A[^a].\n\n[^a]: Bir.", "x");
+    expect(simple).toContain('class="sidenote"');
+    expect(simple).toMatch(/<section[^>]*class="footnotes all-sidenoted"/);
+
+    const complex = await renderMarkdown(
+      "A[^a] again[^a].\n\n[^a]: See B[^b].\n\n    Second paragraph.\n\n[^b]: Inner.",
+      "x",
+    );
+    const ids = [...complex.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(complex).not.toMatch(/all-sidenoted/);
+    const sidenotes = complex.split('<span class="sidenote').slice(1).map((s) => s.split("</span></span>")[0]);
+    expect(sidenotes.some((s) => s.includes("See B"))).toBe(false);
+  });
 });
