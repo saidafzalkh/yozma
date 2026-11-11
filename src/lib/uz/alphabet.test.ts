@@ -8,7 +8,14 @@ describe("alphabet", () => {
     expect(toNewAlphabet("oʻzbek gʻoya shahar choy", P)).toBe("özbek ğoya şahar çoy");
   });
   it("apostrophe variants after o/g", () => {
-    for (const a of ["ʻ", "'", "‘", "`", "’"]) expect(toNewAlphabet(`o${a}g${a}il`, P)).toBe("öğil");
+    for (const a of ["ʻ", "'", "‘", "’"]) expect(toNewAlphabet(`o${a}g${a}il`, P)).toBe("öğil");
+  });
+  it("backticks are inline code, not apostrophes", () => {
+    expect(toNewAlphabet("o`g`il", P)).toBe("o`g`il");
+  });
+  it("word-final o'/g' converts", () => {
+    expect(toNewAlphabet("tog' bog'.", P)).toBe("toğ boğ.");
+    expect(toNewAlphabet("Bog'", P)).toBe("Boğ");
   });
   it("case", () => {
     expect(toNewAlphabet("Shahar SHAHAR Choy Oʻzbek Gʻalaba", P)).toBe("Şahar ŞAHAR Çoy Özbek Ğalaba");

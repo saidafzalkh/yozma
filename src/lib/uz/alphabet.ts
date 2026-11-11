@@ -1,7 +1,7 @@
 import { splitSegments } from "./segments";
 
 const TUTUQ = "ʼ"; // ʼ
-const APOS = "ʻ'‘`’"; // ʻ ' ‘ ` ’
+const APOS = "\u02BB'\u2018\u2019"; // ʻ ' ‘ ’ (backtick is markdown code, not an apostrophe)
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -17,7 +17,7 @@ function convertProse(prose: string, protectedWords: readonly string[]): string 
     : "";
   const re = new RegExp(
     `${protectedAlt}` +
-      `(?<!\\p{N})([oOgG])[${APOS}](?=\\p{L})|` + // o'/g' -> ö/ğ
+      `(?<!\\p{N})([oOgG])[${APOS}]|` + // o'/g' -> ö/ğ
       `([sScC])[hH]|` + // sh/ch -> ş/ç
       `(?<=\\p{L})[${APOS}](?=\\p{L})`, // tutuq
     "gu",

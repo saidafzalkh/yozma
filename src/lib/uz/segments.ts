@@ -60,11 +60,6 @@ export function splitSegments(markdown: string): Segment[] {
     const re = new RegExp(INLINE_PROTECTED);
     for (let m = re.exec(chunk); m; m = re.exec(chunk)) {
       const end = m.index + m[0].length;
-      // A backtick pair glued between letters (o`g`il) is an apostrophe, not code.
-      if (m[0][0] === "`" && /\p{L}/u.test(chunk[m.index - 1] ?? "") && /\p{L}/u.test(chunk[end] ?? "")) {
-        re.lastIndex = m.index + 1;
-        continue;
-      }
       push("prose", from + last, from + m.index);
       push("protected", from + m.index, from + end);
       last = end;
