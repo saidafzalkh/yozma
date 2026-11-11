@@ -1,3 +1,5 @@
+import { tagSlug } from "../uz/format";
+
 export type PostSource = "claude" | "chatgpt";
 export type PostStatus = "draft" | "published";
 
@@ -76,13 +78,27 @@ export function parsePostMeta(data: Record<string, unknown>, slug: string): Post
     throw new PostMetaError(slug, "tags must be a list of strings");
   }
   const tags = (rawTags as string[]).map((t) => t.trim().toLowerCase()).filter(Boolean);
+  for (const tag of tags) {
+    try {
+      tagSlug(tag);
+    } catch {
+      throw new PostMetaError(slug, `invalid tag "${tag}": needs at least one latin letter or digit`);
+    }
+  }
+
+  if (data.description !== undefined && typeof data.description !== "string") {
+    throw new PostMetaError(slug, "description must be a string");
+  }
+  if (data.author !== undefined && typeof data.author !== "string") {
+    throw new PostMetaError(slug, "author must be a string");
+  }
 
   const meta: PostMeta = {
     slug,
     title,
     date,
-    description: typeof data.description === "string" ? data.description : "",
-    author: typeof data.author === "string" && data.author.trim() ? data.author.trim() : DEFAULT_AUTHOR,
+    description: data.description ?? "",
+    author: data.author?.trim() || DEFAULT_AUTHOR,
     tags,
     status,
   };

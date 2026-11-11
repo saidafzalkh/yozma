@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { parseProtectedWords, toNewAlphabet } from "../src/lib/uz/alphabet";
+import { convertFrontmatterFields } from "../src/lib/uz/frontmatter";
 
 const file = process.argv[2];
 if (!file) {
@@ -13,15 +14,7 @@ const words = parseProtectedWords(
   fs.readFileSync(path.join(process.cwd(), "writing", "protected-words.txt"), "utf8"),
 );
 const parsed = matter(fs.readFileSync(file, "utf8"));
-const data: Record<string, unknown> = { ...parsed.data };
-
-for (const key of ["title", "description"]) {
-  const v = data[key];
-  if (typeof v === "string") data[key] = toNewAlphabet(v, words);
-}
-if (Array.isArray(data.tags)) {
-  data.tags = data.tags.map((t) => (typeof t === "string" ? toNewAlphabet(t, words) : t));
-}
+const data = convertFrontmatterFields(parsed.data as Record<string, unknown>, words);
 // js-yaml would serialise a Date as an ISO timestamp; keep YYYY-MM-DD.
 for (const key of ["date", "updated"]) {
   const v = data[key];

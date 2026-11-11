@@ -4,6 +4,15 @@ import { parsePostMeta, PostMetaError } from "./meta";
 const base = { title: "T", date: "2025-07-08", description: "D" };
 
 describe("parsePostMeta", () => {
+  it("rejects a tag with no ASCII slug, naming the tag", () => {
+    const f = () => parsePostMeta({ ...base, tags: ["dasturlash", "Ўзбек"] }, "x");
+    expect(f).toThrow(PostMetaError);
+    expect(f).toThrow(/^posts\/x\.md: .*ўзбек/);
+  });
+  it("rejects non-string description and author", () => {
+    expect(() => parsePostMeta({ ...base, description: 5 }, "x")).toThrow(/^posts\/x\.md: .*description/);
+    expect(() => parsePostMeta({ ...base, author: ["a"] }, "x")).toThrow(/^posts\/x\.md: .*author/);
+  });
   it("throws PostMetaError with file prefix when title is missing", () => {
     expect(() => parsePostMeta({ date: "2025-07-08" }, "x")).toThrow(PostMetaError);
     expect(() => parsePostMeta({ date: "2025-07-08" }, "x")).toThrow(/^posts\/x\.md: /);
