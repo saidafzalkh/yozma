@@ -3,6 +3,27 @@ import { toNewAlphabet, toOldAlphabet, parseProtectedWords } from "@/lib/uz/alph
 
 const P = ["ChatGPT", "GitHub"];
 
+describe("alphabet protected blocks", () => {
+  it("leaves indented code blocks alone", () => {
+    expect(toNewAlphabet("Matn.\n\n    const shop = fetch(url);\n\nshahar", [])).toBe(
+      "Matn.\n\n    const shop = fetch(url);\n\nşahar",
+    );
+    expect(toNewAlphabet("Matn.\n\n\tshop();\n", [])).toBe("Matn.\n\n\tshop();\n");
+  });
+  it("converts indented continuation text inside list items and after paragraphs", () => {
+    expect(toNewAlphabet("- shahar\n\n    shahar davomi\n", [])).toBe("- şahar\n\n    şahar davomi\n");
+    expect(toNewAlphabet("shahar\n    shahar\n", [])).toBe("şahar\n    şahar\n");
+  });
+  it("protects link reference definitions but not link text", () => {
+    expect(toNewAlphabet("[shu][ref] shahar\n\n[ref]: /shop/changelog\n", [])).toBe(
+      "[şu][ref] şahar\n\n[ref]: /shop/changelog\n",
+    );
+    expect(toNewAlphabet("[ref]: <https://x.uz/shop> \"shahar\"\n", [])).toBe(
+      "[ref]: <https://x.uz/shop> \"şahar\"\n",
+    );
+  });
+});
+
 describe("alphabet", () => {
   it("protected words keep protection with Uzbek suffixes", () => {
     const PW = ["ChatGPT", "GitHub", "Chrome", "Shopify"];

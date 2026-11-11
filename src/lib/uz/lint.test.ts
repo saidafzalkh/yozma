@@ -35,6 +35,11 @@ describe("lintPost", () => {
     expect(r.errors.some((e) => e.code === "frontmatter" && /2025-02-30/.test(e.message))).toBe(true);
   });
 
+  it("no old-sh-ch inside an indented code block", async () => {
+    const r = await lintPost(fm() + "Matn.\n\n    const shop = fetch(url);\n", "p", base);
+    expect(r.warnings.filter((w) => w.code === "old-sh-ch")).toEqual([]);
+  });
+
   it("reports invalid YAML as a frontmatter error", async () => {
     const r = await lintPost("---\ntitle: [a\n---\nx\n", "p", base);
     expect(r.errors.map((e) => e.code)).toContain("frontmatter");

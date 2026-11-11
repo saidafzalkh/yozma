@@ -40,6 +40,56 @@ function fencedRanges(md: string, from: number): Range[] {
   return ranges;
 }
 
+const LIST_ITEM = /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/;
+const INDENTED = /^(?: {4}|\t)/;
+const REF_DEF = /^ {0,3}\[(?!\^)[^\]\n]+\]:[ \t]*(?:<[^>\n]*>|\S+)/;
+
+/**
+ * Fenced blocks plus indented code blocks (after a blank line, outside list items) and the
+ * `[label]: destination` part of link reference definitions. Sorted, non-overlapping.
+ */
+function blockRanges(md: string, from: number): Range[] {
+  const fenced = fencedRanges(md, from);
+  const ranges: Range[] = [];
+  let fi = 0;
+  let prevBlank = true;
+  let inList = false;
+  let inCode = false;
+  let pos = from;
+  while (pos < md.length) {
+    const nl = md.indexOf("\n", pos);
+    const end = nl === -1 ? md.length : nl + 1;
+    if (fi < fenced.length && pos >= fenced[fi][0]) {
+      ranges.push(fenced[fi]);
+      pos = fenced[fi][1];
+      fi++;
+      prevBlank = false;
+      inList = false;
+      inCode = false;
+      continue;
+    }
+    const line = md.slice(pos, end);
+    if (line.trim() === "") {
+      prevBlank = true;
+    } else if (INDENTED.test(line) && inList) {
+      prevBlank = false; // list item continuation
+    } else if (INDENTED.test(line) && (prevBlank || inCode)) {
+      ranges.push([pos, end]);
+      inCode = true;
+      prevBlank = false;
+    } else {
+      inCode = false;
+      const item = LIST_ITEM.test(line);
+      inList = item || (inList && !prevBlank);
+      prevBlank = false;
+      const def = REF_DEF.exec(line);
+      if (def) ranges.push([pos, pos + def[0].length]);
+    }
+    pos = end;
+  }
+  return ranges;
+}
+
 export function splitSegments(markdown: string): Segment[] {
   const out: Segment[] = [];
   const push = (kind: Segment["kind"], start: number, end: number) => {
@@ -67,7 +117,7 @@ export function splitSegments(markdown: string): Segment[] {
     push("prose", from + last, to);
   };
 
-  for (const [s, e] of fencedRanges(markdown, fmEnd)) {
+  for (const [s, e] of blockRanges(markdown, fmEnd)) {
     pushProse(cursor, s);
     push("protected", s, e);
     cursor = e;
