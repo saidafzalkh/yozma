@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SITE } from "@/lib/site";
 import "@/styles/global.css";
 
 const inter = Inter({
@@ -8,9 +9,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Yozma", template: "%s · Yozma" },
-  description:
-    "ChatGPT va Claude bilan suhbatlarimdan çiqqan fikrlar, özbek tilida.",
+  metadataBase: new URL(SITE.url),
+  title: { default: SITE.title, template: `%s · ${SITE.title}` },
+  description: SITE.description,
+  alternates: { types: { "application/rss+xml": "/rss.xml" } },
 };
 
 export default function RootLayout({
