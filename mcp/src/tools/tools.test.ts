@@ -216,6 +216,33 @@ describe("updatePost", () => {
     expect(meta.description).toBe("Yangilangan");
     expect(fake.prs).toHaveLength(1);
   });
+  it("retained content is converted too", async () => {
+    const old = buildPostFile(
+      { title: "Eski", date: "2026-01-05", author: "Saidafzal Kholkhujaev", description: "eski", source: "claude", tags: ["ai"] },
+      "Old shahar va o'zbek.",
+    );
+    const { deps, fake } = setup({ "posts/p.md": old });
+    await updatePost(deps, { slug: "p", description: "Yangi" }, "direct");
+    const c = fake.commits.at(-1)!.content;
+    expect(c).toContain("Old şahar");
+    expect(c).toContain("özbek");
+    expect(c).not.toContain("o'zbek");
+  });
+  it("PR closed between lookup and commit -> error with commit URL", async () => {
+    const { deps, fake } = setup();
+    await publishPost(deps, input, "review");
+    const put = fake.gh.putFile;
+    fake.gh.putFile = async (p) => {
+      const r = await put(p);
+      fake.prs.length = 0;
+      return r;
+    };
+    const err = await updatePost(deps, { slug: "birinci-post", description: "Y" }).catch((e) => e);
+    expect(err).toBeInstanceOf(ToolError);
+    expect(err.message).toContain("post/birinci-post");
+    expect(err.message).toContain("/commit/");
+    expect(err.message).toContain("update_post");
+  });
   it("lint errors on update -> nothing committed", async () => {
     const { deps, fake } = setup({ "posts/p.md": existing() });
     const before = fake.commits.length;

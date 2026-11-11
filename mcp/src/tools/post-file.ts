@@ -80,8 +80,9 @@ export async function prepareFile(
   for (const k of ["title", "description", "tags", "source", "seed"] as const) {
     if (changes[k] !== undefined) incoming[k] = changes[k];
   }
-  const data = { ...base.data, ...convertFrontmatterFields(incoming, protectedWords) };
-  const body = changes.body !== undefined ? toNewAlphabet(changes.body, protectedWords) : base.body;
+  // Convert the merged result, so retained content is converted before every commit too.
+  const data = convertFrontmatterFields({ ...base.data, ...incoming }, protectedWords);
+  const body = toNewAlphabet(changes.body ?? base.body, protectedWords);
   const content = buildPostFile(data, body);
   const { errors, warnings } = await lintPost(content, slug, {
     protectedWords,

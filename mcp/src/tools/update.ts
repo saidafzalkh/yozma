@@ -28,7 +28,13 @@ export async function updatePost(
     if (!file) throw new ToolError(`${branch} şöbasida ${path} topilmadi`);
     const base = parseExisting(file.content);
     const prepared = await prepareFile(deps, slug, { data: { ...base.data, date: deps.today() }, body: base.body }, changes);
-    await deps.gh.putFile({ path, content: prepared.content, message, branch, sha: file.sha });
+    const { commitUrl } = await deps.gh.putFile({ path, content: prepared.content, message, branch, sha: file.sha });
+    if (!(await deps.gh.findOpenPr(branch))) {
+      throw new ToolError(
+        `review PR yopilgan: özgarişlar ${branch} şöbasiga saqlandi (${commitUrl}). ` +
+          `Yangi review öçiş uçun update_post ni qayta işlating yoki mode: direct tanlang`,
+      );
+    }
     return { url: pr.url, postUrl: postUrlFor(slug), warnings: prepared.warnings };
   }
 
