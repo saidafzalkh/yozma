@@ -25,7 +25,7 @@ function daysInMonth(year: number, month: number): number {
 }
 
 /** Formats a YYYY-MM-DD string as "D-month, YYYY" in Uzbek. Pure string math, no Date or timezone. */
-export function formatUzDate(date: string): string {
+export function formatUzDate(date: string, opts: { withYear?: boolean } = {}): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   if (!m) throw new Error(`Invalid date: ${date}`);
   const year = Number(m[1]);
@@ -33,7 +33,13 @@ export function formatUzDate(date: string): string {
   const day = Number(m[3]);
   if (month < 1 || month > 12) throw new Error(`Invalid month in date: ${date}`);
   if (day < 1 || day > daysInMonth(year, month)) throw new Error(`Invalid day in date: ${date}`);
-  return `${day}-${MONTHS[month - 1]}, ${year}`;
+  const dayMonth = `${day}-${MONTHS[month - 1]}`;
+  return opts.withYear === false ? dayMonth : `${dayMonth}, ${year}`;
+}
+
+/** Edit date for the "tahrirlangan" label: no year when it equals the publish year. */
+export function formatEditedDate(edited: string, published: string): string {
+  return formatUzDate(edited, { withYear: edited.slice(0, 4) !== published.slice(0, 4) });
 }
 
 /**

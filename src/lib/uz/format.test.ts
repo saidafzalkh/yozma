@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatUzDate, tagSlug } from "@/lib/uz/format";
+import { formatEditedDate, formatUzDate, tagSlug } from "@/lib/uz/format";
 
 describe("formatUzDate", () => {
   it("formats day without leading zero, month name, year", () => {
@@ -47,5 +47,21 @@ describe("tagSlug", () => {
     expect(() => tagSlug("---")).toThrow(/---/);
     expect(() => tagSlug("\u02BB")).toThrow();
     expect(() => tagSlug("\u040E\u0437\u0431\u0435\u043A")).toThrow(/\u040E/);
+  });
+});
+
+describe("formatUzDate withYear", () => {
+  it("omits the year on request", () => {
+    expect(formatUzDate("2026-11-11", { withYear: false })).toBe("11-noyabr");
+    expect(formatUzDate("2026-11-11", { withYear: true })).toBe("11-noyabr, 2026");
+  });
+});
+
+describe("formatEditedDate", () => {
+  it("drops the year when edited in the publish year", () => {
+    expect(formatEditedDate("2026-11-11", "2026-11-10")).toBe("11-noyabr");
+  });
+  it("keeps the full date when the year differs", () => {
+    expect(formatEditedDate("2027-01-05", "2026-11-10")).toBe("5-yanvar, 2027");
   });
 });

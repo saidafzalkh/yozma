@@ -7,6 +7,12 @@ on:
       - 'src/**'
       - 'writing/**'
       - 'package.json'
+      - 'scripts/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/**'
+      - 'next.config.ts'
+      - 'vitest.config.mts'
+      - 'tsconfig.json'
 
 permissions:
   contents: read
@@ -44,8 +50,9 @@ jobs:
         run: pnpm build
 
       - name: Lint changed posts
+        shell: bash
         env:
           TAHRIRCHI_API_KEY: ${{ secrets.TAHRIRCHI_API_KEY }}
         run: |
-          git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}...HEAD" -- 'posts/*.md' \
+          git diff --name-only --diff-filter=AMR "origin/${{ github.base_ref }}...HEAD" -- 'posts/*.md' \
             | xargs -r -d '\n' pnpm yozma:check

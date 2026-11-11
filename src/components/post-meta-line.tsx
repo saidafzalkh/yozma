@@ -1,4 +1,4 @@
-import { formatUzDate } from "@/lib/uz/format";
+import { formatEditedDate, formatUzDate } from "@/lib/uz/format";
 import type { Post, PostSource } from "@/lib/posts/meta";
 
 const SOURCE_LABELS: Record<PostSource, string> = {
@@ -32,7 +32,7 @@ export default function PostMetaLine({
           <span>
             tahrirlangan{" "}
             <time dateTime={post.editedDate}>
-              {formatUzDate(post.editedDate)}
+              {formatEditedDate(post.editedDate, post.date)}
             </time>
           </span>
         </>
