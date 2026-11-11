@@ -57,7 +57,7 @@ async function lint(source: string, slug: string, opts: LintOptions) {
 
   const words = opts.protectedWords.filter(Boolean).sort((a, b) => b.length - a.length);
   const protectedAlt = words.length
-    ? `(?<!${WORD_LETTER})(?:${words.map(escapeRegExp).join("|")})(?!${WORD_LETTER})|`
+    ? `(?<!${WORD_LETTER})(?:${words.map(escapeRegExp).join("|")})\\p{Ll}*|`
     : "";
   const reOg = /(?<!\p{N})[oOgG][ʻ'‘’]/gu;
   const reShCh = new RegExp(`${protectedAlt}[sScC][hH]`, "gu");

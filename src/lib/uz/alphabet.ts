@@ -16,7 +16,7 @@ const LOWER_NEW: Record<string, string> = { o: "ö", g: "ğ", s: "ş", c: "ç" }
 function convertProse(prose: string, protectedWords: readonly string[]): string {
   const words = [...protectedWords].filter(Boolean).sort((a, b) => b.length - a.length);
   const protectedAlt = words.length
-    ? `(?<!${WORD_LETTER})(?:${words.map(escapeRegExp).join("|")})(?!${WORD_LETTER})|`
+    ? `(?<!${WORD_LETTER})(?:${words.map(escapeRegExp).join("|")})\\p{Ll}*|`
     : "";
   const re = new RegExp(
     `${protectedAlt}` +

@@ -12,6 +12,14 @@ describe("parseBlacklist", () => {
 });
 
 describe("lintPost", () => {
+  it("no old-sh-ch for protected words with suffixes", async () => {
+    const r = await lintPost(fm() + "ChatGPTga, GitHubda, Chromeda, Shopifyning\n", "p", {
+      ...base,
+      protectedWords: ["ChatGPT", "GitHub", "Chrome", "Shopify"],
+    });
+    expect(r.warnings.filter((w) => w.code === "old-sh-ch")).toEqual([]);
+  });
+
   it("errors on missing title", async () => {
     const r = await lintPost("---\ndate: '2026-01-02'\ndescription: x\ntags: [a]\n---\nbody\n", "p", base);
     expect(r.errors.map((e) => e.code)).toContain("frontmatter");

@@ -4,6 +4,13 @@ import { toNewAlphabet, toOldAlphabet, parseProtectedWords } from "@/lib/uz/alph
 const P = ["ChatGPT", "GitHub"];
 
 describe("alphabet", () => {
+  it("protected words keep protection with Uzbek suffixes", () => {
+    const PW = ["ChatGPT", "GitHub", "Chrome", "Shopify"];
+    const text = "ChatGPTga, GitHubda, Chromeda, Shopifyning";
+    const once = toNewAlphabet(text, PW);
+    expect(once).toBe(text);
+    expect(toNewAlphabet(once, PW)).toBe(once);
+  });
   it("digraphs", () => {
     expect(toNewAlphabet("oʻzbek gʻoya shahar choy", P)).toBe("özbek ğoya şahar çoy");
   });
