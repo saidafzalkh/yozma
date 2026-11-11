@@ -110,22 +110,25 @@ export async function proofreadOld(text: string, opts: TahrirchiOptions): Promis
 
 /** Spell-check the prose of a new-alphabet markdown file; offsets refer to `markdown`. */
 export async function checkUzbek(markdown: string, opts: TahrirchiOptions): Promise<SpellSuggestion[]> {
+  // Protected segments become spaces (newlines kept) so the text is checked in one pass
+  // with the same offsets and paragraph boundaries.
+  const masked = splitSegments(markdown)
+    .map((seg) => (seg.kind === "protected" ? seg.text.replace(/[^\n]/g, " ") : seg.text))
+    .join("");
+  if (masked.trim() === "") return [];
+  const old = toOldAlphabet(masked);
   const out: SpellSuggestion[] = [];
-  for (const seg of splitSegments(markdown)) {
-    if (seg.kind !== "prose" || seg.text.trim() === "") continue;
-    const old = toOldAlphabet(seg.text);
-    for (const s of await proofreadOld(old.text, opts)) {
-      if (s.length <= 0 || s.offset >= old.toNewIndex.length) continue;
-      const first = old.toNewIndex[s.offset];
-      const last = old.toNewIndex[Math.min(s.offset + s.length, old.toNewIndex.length) - 1];
-      out.push({
-        offset: seg.start + first,
-        length: last + 1 - first,
-        token: seg.text.slice(first, last + 1),
-        corrections: s.corrections,
-        oldToken: old.text.slice(s.offset, s.offset + s.length),
-      });
-    }
+  for (const s of await proofreadOld(old.text, opts)) {
+    if (s.length <= 0 || s.offset >= old.toNewIndex.length) continue;
+    const first = old.toNewIndex[s.offset];
+    const last = old.toNewIndex[Math.min(s.offset + s.length, old.toNewIndex.length) - 1];
+    out.push({
+      offset: first,
+      length: last + 1 - first,
+      token: markdown.slice(first, last + 1),
+      corrections: s.corrections,
+      oldToken: old.text.slice(s.offset, s.offset + s.length),
+    });
   }
   return out;
 }
