@@ -12,6 +12,7 @@
     "yozma:check": "tsx scripts/yozma-check.ts"
   },
   "dependencies": {
+    "@shikijs/rehype": "4.6.0",
     "gray-matter": "^4.0.3",
     "js-yaml": "^3.14.1",
     "next": "15.2.1",
@@ -24,6 +25,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
+    "shiki": "4.6.0",
     "unified": "^11.0.5"
   },
   "devDependencies": {
