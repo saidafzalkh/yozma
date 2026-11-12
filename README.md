@@ -27,9 +27,10 @@ Posts live in `posts/<slug>.md`: Markdown with YAML frontmatter.
 | Field | Meaning |
 | --- | --- |
 | `title`, `date`, `description`, `tags` | Basic metadata (`date` is `YYYY-MM-DD`, Asia/Tashkent) |
-| `source` | Model the chat happened with (`claude`, `chatgpt`, ...) |
+| `author` | Post author |
+| `source` | Model the chat happened with (`claude` or `chatgpt`) |
 | `seed` | The author's original thought the post grew from |
-| `status` | Publication state |
+| `status` | `draft` or `published` (default `published`) |
 | `updated` | Date of the last edit |
 
 Footnotes named `[^ai-N]` are the AI's notes and render as ✦. Each post may contain one mermaid diagram. See [posts/welcome-to-yozma.md](posts/welcome-to-yozma.md) for an example.
@@ -58,7 +59,7 @@ pnpm yozma:convert <file>            # old alphabet -> new alphabet
 
 ## MCP server
 
-`mcp/` is a Cloudflare Worker at `https://mcp.yozma.uz/mcp`. Sign-in is GitHub OAuth, limited to the author's account. Tools:
+Run `pnpm install` at the repo root first. `mcp/` is a Cloudflare Worker at `https://mcp.yozma.uz/mcp`. Sign-in is GitHub OAuth, limited to the author's account. Tools:
 
 - `get_guide`: the interview, style guide and blacklist, to read before writing
 - `check_uzbek`: convert and lint Markdown, returns errors and warnings

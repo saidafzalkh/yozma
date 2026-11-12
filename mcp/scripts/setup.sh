@@ -86,6 +86,7 @@ confirm() {
   local reply=""
   printf '  %s? %s [y/N] ' "$YELLOW" "$1"
   read -r reply || true
+  printf '%s' "$RESET"
   [[ "$reply" =~ ^[Yy] ]]
 }
 
@@ -202,7 +203,11 @@ MCP_DIR="$ROOT/mcp"
 KV_PLACEHOLDER="REPLACE_WITH_OAUTH_KV_ID"
 
 # wr ARGS... runs wrangler from mcp/.
-wr() { (cd "$MCP_DIR" && npx wrangler "$@"); }
+if [[ ! -x "$MCP_DIR/node_modules/.bin/wrangler" ]]; then
+  printf 'wrangler is not installed. Run `pnpm install` at the repo root, then re-run this script.\n' >&2
+  exit 1
+fi
+wr() { pnpm --dir "$MCP_DIR" exec wrangler "$@"; }
 
 # secret_exists NAME succeeds if the Worker already has that secret.
 secret_exists() { wr secret list 2>/dev/null | grep -q "\"name\": *\"$1\""; }
@@ -309,13 +314,13 @@ pause
 # ── 7. Verify ─────────────────────────────────────────────────────────────
 stage "Verify"
 say "Waiting a moment can help: the new domain may need a minute for certificates."
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$MCP_URL/mcp" || true)
+code=$(curl -s --max-time 15 -o /dev/null -w '%{http_code}' -X POST "$MCP_URL/mcp" || true)
 if [[ "$code" == "401" ]]; then say "✓ POST /mcp → 401 (auth required)"
 else warn "POST /mcp → $code (expected 401)"; SKIPPED+=("verify: POST $MCP_URL/mcp should return 401"); fi
-code=$(curl -s -o /dev/null -w '%{http_code}' "$MCP_URL/.well-known/oauth-protected-resource/mcp" || true)
+code=$(curl -s --max-time 15 -o /dev/null -w '%{http_code}' "$MCP_URL/.well-known/oauth-protected-resource/mcp" || true)
 if [[ "$code" == "200" ]]; then say "✓ protected-resource metadata → 200"
 else warn "protected-resource metadata → $code (expected 200)"; SKIPPED+=("verify: $MCP_URL/.well-known/oauth-protected-resource/mcp should return 200"); fi
-if curl -s "$MCP_URL/.well-known/oauth-authorization-server" | grep -q "\"issuer\":\"$MCP_URL\""; then
+if curl -s --max-time 15 "$MCP_URL/.well-known/oauth-authorization-server" | grep -q "\"issuer\":\"$MCP_URL\""; then
   say "✓ authorization-server issuer is $MCP_URL"
 else
   warn "authorization-server metadata has no issuer $MCP_URL"
@@ -331,6 +336,7 @@ step "ChatGPT: Settings → Apps & Connectors (or Plugins) → Advanced → Deve
 warn "On some ChatGPT plans write tools may be unavailable; check in the UI."
 step "Claude Code: claude mcp add --transport http yozma $MCP_URL/mcp"
 say "Sign in with GitHub as saidafzalkh when asked."
+say "First call get_guide from the client; a GitHub error there means the token is wrong or lacks access to saidafzalkh/yozma."
 pause "Press Enter to finish."
 
 finish
