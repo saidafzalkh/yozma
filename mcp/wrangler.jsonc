@@ -4,7 +4,7 @@
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "routes": [{ "pattern": "mcp.yozma.uz", "custom_domain": true }],
-  "kv_namespaces": [{ "binding": "OAUTH_KV", "id": "REPLACE_WITH_OAUTH_KV_ID" }],
+  "kv_namespaces": [{ "binding": "OAUTH_KV", "id": "50609e64854f4536a089c43abd59f4fd" }],
   "vars": {
     "ALLOWED_GITHUB_LOGIN": "saidafzalkh",
     "MCP_RESOURCE": "https://mcp.yozma.uz/mcp",
