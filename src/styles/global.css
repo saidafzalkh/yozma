@@ -30,3 +30,42 @@ section[data-footnotes] li.ai-note::before {
   content: "✦";
   color: var(--color-ai);
 }
+
+/* Code blocks highlighted by Shiki (min-light) */
+pre.shiki {
+  border: 1px solid var(--color-gray-200);
+}
+
+/* Sidenotes: simple footnotes in the right margin on wide screens, the footnotes section otherwise. */
+.sidenote {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    width: 14rem;
+    margin-right: -16.5rem;
+    margin-top: 0.25em;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--color-gray-600);
+  }
+  .sidenote-number {
+    font-weight: 600;
+  }
+  .sidenote.ai .sidenote-number {
+    color: var(--color-ai);
+  }
+  /* Visually hidden only: screen readers still reach the notes. */
+  section.all-sidenoted {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
