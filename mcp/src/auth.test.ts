@@ -46,6 +46,21 @@ describe("GitHub callback", () => {
     expect(s.fetch).not.toHaveBeenCalled();
     expect(s.completeAuthorization).not.toHaveBeenCalled();
   });
+  it("sends a User-Agent on the token exchange", async () => {
+    const s = setup("saidafzalkh");
+    await defaultHandler.fetch(new Request("https://mcp.test/callback?code=code&state=state"), s.env, s.fetch);
+    expect(new Headers(s.fetch.mock.calls[0][1]?.headers).get("user-agent")).toBe("Yozma-MCP");
+  });
+  it("logs only name and message when the callback throws", async () => {
+    const s = setup("saidafzalkh");
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    s.fetch.mockReset().mockRejectedValue(new Error("boom upstream"));
+    await defaultHandler.fetch(new Request("https://mcp.test/callback?code=x"), s.env, s.fetch);
+    const logged = spy.mock.calls.flat().join(" ");
+    spy.mockRestore();
+    expect(logged).toContain("boom upstream");
+    expect(logged).not.toContain("secret");
+  });
   it("fails closed on GitHub errors", async () => {
     const s = setup("saidafzalkh");
     s.fetch.mockReset().mockResolvedValue(Response.json({ error: "bad_verification_code" }));

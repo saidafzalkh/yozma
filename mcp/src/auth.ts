@@ -53,7 +53,7 @@ export const defaultHandler = {
         if (!code || url.searchParams.has("error")) return new Response("Kiriş bekor qilindi", { status: 400, headers: resumed.headers });
         const tokenResponse = await doFetch("https://github.com/login/oauth/access_token", {
           method: "POST",
-          headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+          headers: { Accept: "application/json", "User-Agent": "Yozma-MCP", "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({ client_id: env.GITHUB_CLIENT_ID, client_secret: env.GITHUB_CLIENT_SECRET, code, redirect_uri: `${url.origin}/callback` }).toString(),
         });
         if (!tokenResponse.ok) throw new Error("token exchange failed");
@@ -69,7 +69,8 @@ export const defaultHandler = {
         return redirect(resumed.headers, redirectTo);
       }
       return new Response("Topilmadi", { status: 404 });
-    } catch {
+    } catch (error) {
+      console.error("oauth callback failed:", error instanceof Error ? `${error.name}: ${error.message}` : "unknown error");
       return new Response("Kirişda xato. Qayta urinib köring.", { status: 400 });
     }
   },

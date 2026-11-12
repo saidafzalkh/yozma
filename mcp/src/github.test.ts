@@ -40,6 +40,14 @@ describe("github client", () => {
     expect(calls[0].url).toBe("https://api.github.com/repos/saidafzalkh/yozma/git/ref/heads/main");
   });
 
+  it("sends a User-Agent on every request", async () => {
+    const { gh, calls } = mk([{ body: { encoding: "base64", content: b64("x"), sha: "s1" } }, { body: {} }]);
+    await gh.getFile("posts/x.md");
+    await gh.putFile({ path: "posts/x.md", content: "x", message: "m", branch: "main" }).catch(() => undefined);
+    expect(calls.length).toBeGreaterThan(1);
+    for (const c of calls) expect(new Headers(c.init.headers).get("user-agent")).toBe("Yozma-MCP");
+  });
+
   it("getFile returns null on 404", async () => {
     const { gh } = mk([{ status: 404, body: { message: "Not Found" } }]);
     expect(await gh.getFile("posts/x.md")).toBeNull();

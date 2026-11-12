@@ -57,6 +57,7 @@ export function createGitHub(opts: GitHubOptions) {
       headers: {
         Authorization: `Bearer ${opts.token}`,
         Accept: "application/vnd.github+json",
+        "User-Agent": "Yozma-MCP",
         "X-GitHub-Api-Version": "2022-11-28",
         ...(init.body !== undefined ? { "Content-Type": "application/json" } : {}),
       },

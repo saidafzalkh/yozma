@@ -22,6 +22,8 @@ export async function toolResult(run: () => Promise<unknown>) {
     const result = await run();
     return { content: [{ type: "text" as const, text: typeof result === "string" ? result : JSON.stringify(result) }] };
   } catch (error) {
+    const status = error instanceof GitHubError ? ` status=${error.status}` : "";
+    console.error("tool failed:", error instanceof Error ? `${error.name}: ${error.message}${status}` : "unknown error");
     const message = error instanceof ToolError || error instanceof GitHubError ? error.message : "Xato yüz berdi. Qayta urinib köring.";
     return { isError: true, content: [{ type: "text" as const, text: JSON.stringify({ message, issues: error instanceof ToolError ? error.issues : [] }) }] };
   }
@@ -42,11 +44,11 @@ export function createServer(env: ToolEnv) {
   const deps: ToolDeps = {
     gh: createGitHub({ token: env.GITHUB_TOKEN, repo: env.REPO }),
     today: tashkentDate,
-    ...(env.TAHRIRCHI_API_KEY ? { tahrirchi: { apiKey: env.TAHRIRCHI_API_KEY } } : {}),
+    ...(env.TAHRIRCHI_API_KEY ? { tahrirchi: { apiKey: env.TAHRIRCHI_API_KEY, fetch: (input, init) => fetch(input, { ...init, headers: { ...(init?.headers as Record<string, string> | undefined), "User-Agent": "Yozma-MCP" } }) } } : {}),
   };
   server.registerTool("get_guide", { description: `Read the writing interview, style guide and blacklist first. ${guide}`, inputSchema: {} }, () => toolResult(() => getGuide(deps)));
-  server.registerTool("check_uzbek", { description: `Convert and lint Uzbek Markdown, returning errors and warnings. ${guide}`, inputSchema: { markdown: z.string() } }, ({ markdown }) => toolResult(() => checkUzbek(deps, markdown)));
-  server.registerTool("convert_alphabet", { description: `Convert text to the new Uzbek alphabet, preserving protected words. ${guide}`, inputSchema: { text: z.string() } }, ({ text }) => toolResult(() => convertAlphabet(deps, text)));
+  server.registerTool("check_uzbek", { description: `Convert and lint Uzbek Markdown, returning errors and warnings. ${guide}`, inputSchema: { markdown: z.string().max(200000) } }, ({ markdown }) => toolResult(() => checkUzbek(deps, markdown)));
+  server.registerTool("convert_alphabet", { description: `Convert text to the new Uzbek alphabet, preserving protected words. ${guide}`, inputSchema: { text: z.string().max(200000) } }, ({ text }) => toolResult(() => convertAlphabet(deps, text)));
   server.registerTool("publish_post", {
     description: `Publish a new post. ${guide} Before calling publish_post, ask the author to choose direct publication or review via PR. source must be claude or chatgpt matching the client.`,
     inputSchema: { slug, ...fields, mode, model },
