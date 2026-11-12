@@ -2,6 +2,7 @@
   "name": "yozma-mcp",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
   "routes": [{ "pattern": "mcp.yozma.uz", "custom_domain": true }],
   "kv_namespaces": [{ "binding": "OAUTH_KV", "id": "REPLACE_WITH_OAUTH_KV_ID" }],
   "vars": {
