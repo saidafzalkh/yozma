@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { fields, tashkentDate, toolResult } from "./server";
+import { fields, tashkentDate, toolResult, withUserAgent } from "./server";
 import { ToolError } from "./tools/post-file";
 import { GitHubError } from "./github";
 
@@ -26,4 +26,20 @@ it("logs name, message and status without secrets", async () => {
   expect(logged).toContain("GitHubError");
   expect(logged).toContain("forbidden thing");
   expect(logged).toContain("403");
+});
+
+it("adds a User-Agent without dropping existing headers of any shape", async () => {
+  const seen: Headers[] = [];
+  const base = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+    seen.push(new Headers(init?.headers));
+    return new Response("{}");
+  }) as unknown as typeof fetch;
+  const f = withUserAgent(base);
+  await f("https://x", { headers: new Headers({ Authorization: "K" }) });
+  await f("https://x", { headers: [["Content-Type", "application/json"]] });
+  await f("https://x", { headers: { Authorization: "K2" } });
+  expect(seen[0].get("Authorization")).toBe("K");
+  expect(seen[1].get("Content-Type")).toBe("application/json");
+  expect(seen[2].get("Authorization")).toBe("K2");
+  for (const h of seen) expect(h.get("User-Agent")).toBe("Yozma-MCP");
 });

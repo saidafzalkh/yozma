@@ -39,12 +39,21 @@ export const slug = z.string().max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const mode = z.enum(["direct", "review"]);
 export const model = z.string().max(100).optional().describe("Exact model name only if reported by the client; omit if unknown (AI fallback).");
 
+/** Wraps fetch so every request carries `User-Agent: Yozma-MCP`, keeping headers of any shape. */
+export function withUserAgent(base: typeof fetch): typeof fetch {
+  return (input, init) => {
+    const headers = new Headers(init?.headers);
+    headers.set("User-Agent", "Yozma-MCP");
+    return base(input, { ...init, headers });
+  };
+}
+
 export function createServer(env: ToolEnv) {
   const server = new McpServer({ name: "Yozma", version: "0.1.0" });
   const deps: ToolDeps = {
     gh: createGitHub({ token: env.GITHUB_TOKEN, repo: env.REPO }),
     today: tashkentDate,
-    ...(env.TAHRIRCHI_API_KEY ? { tahrirchi: { apiKey: env.TAHRIRCHI_API_KEY, fetch: (input, init) => fetch(input, { ...init, headers: { ...(init?.headers as Record<string, string> | undefined), "User-Agent": "Yozma-MCP" } }) } } : {}),
+    ...(env.TAHRIRCHI_API_KEY ? { tahrirchi: { apiKey: env.TAHRIRCHI_API_KEY, fetch: withUserAgent((input, init) => fetch(input, init)) } } : {}),
   };
   server.registerTool("get_guide", { description: `Read the writing interview, style guide and blacklist first. ${guide}`, inputSchema: {} }, () => toolResult(() => getGuide(deps)));
   server.registerTool("check_uzbek", { description: `Convert and lint Uzbek Markdown, returning errors and warnings. ${guide}`, inputSchema: { markdown: z.string().max(200000) } }, ({ markdown }) => toolResult(() => checkUzbek(deps, markdown)));

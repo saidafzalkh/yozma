@@ -219,7 +219,7 @@ put_secret() {
     if ! confirm "$name is already set. Replace it?"; then note "keeping existing $name"; return 0; fi
   fi
   step "Paste the value for $name when wrangler asks (input is hidden)."
-  wr secret put "$name" || { SKIPPED+=("secret $name (cd mcp && npx wrangler secret put $name)"); warn "$name not set"; }
+  wr secret put "$name" || { SKIPPED+=("secret $name (pnpm --dir mcp exec wrangler secret put $name)"); warn "$name not set"; }
 }
 
 run_wizard() {
@@ -297,7 +297,7 @@ say "TAHRIRCHI_API_KEY enables the optional Uzbek spellcheck."
 if confirm "Set TAHRIRCHI_API_KEY now? (No = skip)"; then
   put_secret TAHRIRCHI_API_KEY
 else
-  note "skipped; set it later with: cd mcp && npx wrangler secret put TAHRIRCHI_API_KEY"
+  note "skipped; set it later with: pnpm --dir mcp exec wrangler secret put TAHRIRCHI_API_KEY"
 fi
 pause
 
@@ -307,7 +307,7 @@ say "Deploying also creates the custom domain mcp.yozma.uz (DNS is on the same a
 if confirm "Run wrangler deploy now?"; then
   wr deploy || { warn "deploy failed"; exit 1; }
 else
-  SKIPPED+=("deploy (cd mcp && npx wrangler deploy)")
+  SKIPPED+=("deploy (pnpm --dir mcp exec wrangler deploy)")
 fi
 pause
 
