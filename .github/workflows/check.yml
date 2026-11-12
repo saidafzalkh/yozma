@@ -9,6 +9,8 @@ on:
       - 'package.json'
       - 'scripts/**'
       - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'mcp/**'
       - '.github/workflows/**'
       - 'next.config.ts'
       - 'vitest.config.mts'
@@ -39,6 +41,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Typecheck MCP Worker
+        run: pnpm mcp:typecheck
 
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
