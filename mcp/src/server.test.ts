@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { tashkentDate, toolResult } from "./server";
+import { fields, tashkentDate, toolResult } from "./server";
 import { ToolError } from "./tools/post-file";
 
 it("uses the next Tashkent calendar day after UTC midnight offset", () => {
@@ -11,4 +11,8 @@ it("returns lint issues with the Uzbek error message", async () => {
   const result = await toolResult(async () => { throw new ToolError("Tekşiruvdan ötmadi", issues); });
   expect(result.isError).toBe(true);
   expect(JSON.parse(result.content[0].text)).toEqual({ message: "Tekşiruvdan ötmadi", issues });
+});
+it("rejects over-long tool inputs", () => {
+  expect(fields.title.safeParse("a".repeat(301)).success).toBe(false);
+  expect(fields.title.safeParse("a".repeat(300)).success).toBe(true);
 });

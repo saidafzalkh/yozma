@@ -53,3 +53,18 @@ describe("GitHub callback", () => {
     expect(s.completeAuthorization).not.toHaveBeenCalled();
   });
 });
+
+describe("consent CSP", () => {
+  it("does not restrict form-action, so the POST redirect to GitHub and the client is not blocked", async () => {
+    const oauth = {
+      parseAuthRequest: vi.fn().mockResolvedValue({}),
+      describeConsent: vi.fn().mockResolvedValue({ clientName: "client", redirectHost: "client.test", scope: ["write"], redirectIsLoopback: false }),
+      beginConsent: vi.fn().mockResolvedValue({ handle: "handle", headers: new Headers() }),
+    };
+    const env = { GITHUB_CLIENT_ID: "id", GITHUB_CLIENT_SECRET: "secret", ALLOWED_GITHUB_LOGIN: "saidafzalkh", OAUTH_PROVIDER: oauth } as unknown as AuthEnv;
+    const res = await defaultHandler.fetch(new Request("https://mcp.test/authorize"), env, vi.fn<typeof globalThis.fetch>());
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+    expect(res.headers.get("Content-Security-Policy")).not.toContain("form-action");
+  });
+});

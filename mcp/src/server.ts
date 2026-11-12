@@ -29,13 +29,13 @@ export async function toolResult(run: () => Promise<unknown>) {
 
 const guide = "Before writing, call get_guide and follow it.";
 const source = z.enum(["claude", "chatgpt"]).describe("Must match the client: claude for Claude, chatgpt for ChatGPT.");
-const fields = {
-  title: z.string(), description: z.string(), tags: z.array(z.string()), source,
-  seed: z.string().optional(), body: z.string(),
+export const fields = {
+  title: z.string().max(300), description: z.string().max(500), tags: z.array(z.string().max(50)).max(20), source,
+  seed: z.string().max(500).optional(), body: z.string().max(200000),
 };
-const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const slug = z.string().max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const mode = z.enum(["direct", "review"]);
-const model = z.string().optional().describe("Exact model name only if reported by the client; omit if unknown (AI fallback).");
+export const model = z.string().max(100).optional().describe("Exact model name only if reported by the client; omit if unknown (AI fallback).");
 
 export function createServer(env: ToolEnv) {
   const server = new McpServer({ name: "Yozma", version: "0.1.0" });

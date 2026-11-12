@@ -31,7 +31,7 @@ export const defaultHandler = {
         const details = await oauth.describeConsent(auth);
         const consent = await oauth.beginConsent(auth);
         consent.headers.set("Content-Type", "text/html; charset=utf-8");
-        consent.headers.set("Content-Security-Policy", "default-src 'none'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
+        consent.headers.set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
         return new Response(`<!doctype html><html lang="uz"><meta charset="utf-8"><title>Yozma — ruxsat</title><h1>Yozma uçun ruxsat</h1><p>Mijoz: ${escapeHtml(details.clientName)}</p><p>Token manzili: ${escapeHtml(details.redirectHost)}</p><p>Ruxsatlar: ${escapeHtml(details.scope.join(", "))}</p>${details.redirectIsLoopback ? "<p>Bu mahalliy manzil. Uni boşqa dastur ham tinglay olişi mumkin.</p>" : ""}<form method="post" action="/authorize"><input type="hidden" name="handle" value="${escapeHtml(consent.handle)}"><button name="decision" value="approve">Ruxsat beriş</button><button name="decision" value="deny">Rad etiş</button></form></html>`, { headers: consent.headers });
       }
       if (url.pathname === "/authorize" && request.method === "POST") {
